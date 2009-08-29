@@ -19,8 +19,8 @@
    </license>
 
    <requires>
-      <import feature="net.bioclipse.chemoinformatics_feature" version="2.0.0.B20090520"/>
-      <import feature="net.bioclipse.speclipse_feature" version="2.0.0.B20090520"/>
+      <import feature="net.bioclipse.chemoinformatics_feature" version="2.1.0.v20090809"/>
+      <import feature="net.bioclipse.speclipse_feature" version="2.0.1.v20090821"/>
    </requires>
 
    <plugin
