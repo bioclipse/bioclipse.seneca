@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://www.ebi.ac.uk/steinbeck/speclipse/net.bioclipse.seneca-updatesite/">
+      Seneca Update Site
+   </description>
+   <feature url="features/net.bioclipse.seneca_feature_0.0.1.B20090829.jar" id="net.bioclipse.seneca_feature" version="0.0.1.B20090829"/>
+</site>

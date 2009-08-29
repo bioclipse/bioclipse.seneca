@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Seneca Plugin
 Bundle-SymbolicName: net.bioclipse.seneca;singleton:=true
-Bundle-Version: 0.1.1
-Bundle-Vendor: Egon Willighagen
+Bundle-Version: 0.0.1.B20090829
+Bundle-Vendor: The Bioclipse Team@EBI
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  net.bioclipse.logger,
