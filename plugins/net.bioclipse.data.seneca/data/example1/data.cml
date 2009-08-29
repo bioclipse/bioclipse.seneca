@@ -1,0 +1,15 @@
+<cml convention="senecaInput" xmlns="http://www.xml-cml.org/schema">
+  <formula concise="C 5 H 10 O 2"/>
+  <spectrum type="NMR">
+    <peakList>
+      <peak xValue="172.4" yValue="1.0"/>
+      <peak xValue="59.7" yValue="1.0"/>
+      <peak xValue="27.4" yValue="1.0"/>
+      <peak xValue="14.2" yValue="1.0"/>
+      <peak xValue="9.0" yValue="1.0"/>
+    </peakList>
+    <metadataList>
+      <metadata dictRef="jcampdx:dotOBSERVENUCLEUS" content="13C" />
+    </metadataList>
+  </spectrum>
+</cml>

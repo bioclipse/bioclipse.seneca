@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spectrum type="massSpectrum" title="2(10)-Pinen-3-one, (.+/-.)-" id="sid_e8134a94befb190195f89e3909bc925a37cdb19d" xmlns="http://www.xml-cml.org/schema">
+  <peakList>
+    <peak xValue="15.0" yValue="420.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="16.0" yValue="1201.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="26.0" yValue="300.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="27.0" yValue="3073.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="28.0" yValue="510.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="29.0" yValue="1371.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="31.0" yValue="280.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="38.0" yValue="240.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="39.0" yValue="3193.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="40.0" yValue="721.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="41.0" yValue="6736.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="42.0" yValue="440.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="43.0" yValue="2372.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="44.0" yValue="861.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="45.0" yValue="160.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="50.0" yValue="260.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="51.0" yValue="981.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="52.0" yValue="400.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="53.0" yValue="9709.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="54.0" yValue="861.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="55.0" yValue="1161.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="56.0" yValue="200.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="57.0" yValue="581.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="58.0" yValue="160.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="63.0" yValue="140.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="65.0" yValue="681.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="66.0" yValue="601.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="67.0" yValue="1001.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="68.0" yValue="440.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="69.0" yValue="4244.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="70.0" yValue="520.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="71.0" yValue="360.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="73.0" yValue="240.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="77.0" yValue="1611.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="78.0" yValue="581.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="79.0" yValue="3353.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="80.0" yValue="1271.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="81.0" yValue="9999.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="82.0" yValue="1331.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="83.0" yValue="500.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="85.0" yValue="180.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="90.0" yValue="300.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="91.0" yValue="1221.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="92.0" yValue="420.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="93.0" yValue="961.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="94.0" yValue="741.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="95.0" yValue="621.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="96.0" yValue="180.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="97.0" yValue="320.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="105.0" yValue="360.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="106.0" yValue="280.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="107.0" yValue="3984.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="108.0" yValue="7597.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="109.0" yValue="1251.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="111.0" yValue="220.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="117.0" yValue="160.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="119.0" yValue="160.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="121.0" yValue="380.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="122.0" yValue="1061.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="123.0" yValue="200.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="135.0" yValue="2532.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="136.0" yValue="160.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="149.0" yValue="160.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="150.0" yValue="2993.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+    <peak xValue="151.0" yValue="180.0" xUnits="jcampdx:m/z" yUnits="jcampdx:RELATIVE ABUNDANCE"/>
+  </peakList>
+  <metadataList>
+    <metadata name="jcampdx:Title" title="Title" id="TITLE" content="2(10)-Pinen-3-one, (.+/-.)-"/>
+    <metadata name="jcampdx:Owner" title="Owner" id="OWNER" content="NIST Mass Spectrometry Data Center Collection (C) 2008 copyright by the U.S. Secretary of Commerce on behalf of the United States of America. All rights reserved."/>
+    <metadata name="jcampdx:Origin" title="Origin" id="ORIGIN" content="A.Swigar, R.Silverstein, Monoterpenes,1981"/>
+    <metadata name="jcampdx:Origin" title="Origin" id="ORIGIN" content="A.Swigar, R.Silverstein, Monoterpenes,1981"/>
+    <metadata name="jcampdx:Owner" title="Owner" id="OWNER" content="NIST Mass Spectrometry Data Center Collection (C) 2008 copyright by the U.S. Secretary of Commerce on behalf of the United States of America. All rights reserved."/>
+    <metadata name="jcampdx:Cas Registry No" title="Cas Registry No" id="CASREGISTRYNO" content="30460-92-5"/>
+    <metadata name="jcampdx:NISTMASSSPECNO" title="jcampdxNISTMASSSPECNO" id="nistmassspecno" content="292855"/>
+    <metadata name="jcampdx:Molform" title="Molform" id="MOLFORM" content="C10H14O"/>
+    <metadata name="jcampdx:MW" title="MW" id="MW" content="150"/>
+    <metadata name="jcampdx:NISTSOURCE" title="jcampdxNISTSOURCE" id="nistsource" content="MSDC"/>
+    <metadata name="jcampdx:MaxX" title="MaxX" id="MAXX" content="151"/>
+    <metadata name="jcampdx:MinX" title="MinX" id="MINX" content="15"/>
+    <metadata name="jcampdx:MaxY" title="MaxY" id="MAXY" content="9999"/>
+    <metadata name="jcampdx:MINY" title="MINY" id="MINY" content="140"/>
+  </metadataList>
+</spectrum>

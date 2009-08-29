@@ -1,0 +1,33 @@
+<html>
+<head>
+  <link rel="stylesheet" href="../../PRODUCT_PLUGIN/narrow_book.css" type="text/css">
+  <title>Developer Documentation</title>
+</head>
+
+<body>
+<h1>Developer Documentation</h1>
+<h2>Writing a Scoring Function</h2>
+<p>Scoring functions (also called judges) are contributed via the t.bioclipse.seneca.SenecaJudge 
+extension. An example entry could look like this:</p>
+<pre>   
+   <extension
+         point="net.bioclipse.seneca.SenecaJudge">
+      <CASEJudge
+            class="net.bioclipse.seneca.judge.WCCNMRShiftDBJudge"
+            id="WCCNMRShiftDBJudge"
+            name="WCCNMRShiftDBJudge"/>
+   </extension>
+</pre>
+<p>The schema for the extension point can found <a href="../schema/SenecaJudge.exsd">here</a>. 
+The judge class must implement the net.bioclipse.seneca.judge.IJudge interface. 
+In most cases, the abstract class net.bioclipse.seneca.judge.Judge can be extended. The 
+class should then implement the empty constructor and the methods createJudge, evaluate, 
+getDescription, checkJudge and setData (see JavaDoc for explanation). The judge
+should then show up in the editor and can be used.</p>
+<p>Important considerations:
+<ul>
+<li>The evaluate method needs to return a score starting with 0 (very bad) to calcMaxScore() (very good).</li>
+</ul>
+</p>
+</body>
+</html>

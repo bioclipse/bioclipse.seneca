@@ -1,0 +1,1 @@
+<senecaJob xmlns="http://cdk.sf.net/seneca/"><data CH0="4" CH1="6" CH2="1" CH3="0" /><generator id="org.openscience.cdk.structgen.RandomGenerator" enabled="true"><numberSteps value="1000" /></generator><judge id="net.bioclipse.seneca.judge.WCCNMRShiftDBJudge" enabled="true" data="mzdiv-762_c.cml" /><mf>C11H8N2O2</mf><title>mzdiv762</title></senecaJob>

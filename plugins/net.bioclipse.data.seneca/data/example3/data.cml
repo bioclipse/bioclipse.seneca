@@ -1,0 +1,21 @@
+<cml convention="senecaInput" xmlns="http://www.xml-cml.org/schema">
+  <formula concise="C 5 H 10 O 2"/>
+  <spectrum type="MS">
+    <peakList>
+      <peak xValue="27" yValue="170"/>
+      <peak xValue="28" yValue="60"/>
+      <peak xValue="29" yValue="999"/>
+      <peak xValue="30" yValue="20"/>
+      <peak xValue="39" yValue="200"/>
+      <peak xValue="40" yValue="30"/>
+      <peak xValue="41" yValue="370"/>
+      <peak xValue="42" yValue="40"/>
+      <peak xValue="57" yValue="999"/>
+      <peak xValue="58" yValue="40"/>
+      <peak xValue="69" yValue="340"/>
+      <peak xValue="70" yValue="20"/>
+      <peak xValue="98" yValue="140"/>
+      <peak xValue="99" yValue="10"/>
+    </peakList>
+  </spectrum>
+</cml>

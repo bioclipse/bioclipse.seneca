@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+      point = "org.eclipse.ui.newWizards">
+ 	<wizard
+	   id = "net.bioclipse.data.seneca.wizards.NewSenecaExamplesWizard"
+	   name = "Seneca Sample Data Project"
+	   project="true"
+	   class="net.bioclipse.data.wizards.NewDataProjectWizard"
+	   category="net.bioclipse.data"
+	   icon="icons/molecule16.gif">
+   	   <description>Install a Project with Seneca sample data set</description>
+	   <selection class="org.eclipse.core.resources.IResource"/>
+	</wizard>
+ 	<wizard
+	   id = "net.bioclipse.data.seneca.wizards.NewSenecaExamplesWizard"
+	   name = "Seneca Sample Data Project"
+	   project="true"
+	   class="net.bioclipse.data.wizards.NewDataProjectWizard"
+	   category="net.bioclipse.seneca"
+	   icon="icons/molecule16.gif">
+   	   <description>Install a Project with Seneca sample data set</description>
+	   <selection class="org.eclipse.core.resources.IResource"/>
+	</wizard>
+  </extension>
+
+  <extension
+      point="net.bioclipse.data.install">
+      <folder 
+      	name="Seneca"
+      	description="Seneca Samples"
+      	location="data"
+      	wizard="net.bioclipse.data.seneca.wizards.NewSenecaExamplesWizard"
+  	    icon="icons/drug_icon.gif"/>
+  </extension>
+
+</plugin>

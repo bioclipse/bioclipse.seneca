@@ -1,0 +1,19 @@
+<cml xmlns="http://www.xml-cml.org/schema">
+  <spectrum type="NMR">
+    <peakList>
+      <peak xValue="116.3" yValue="1.0" atomRefs="a1" />
+      <peak xValue="144.5" yValue="1.0" atomRefs="a2" />
+      <peak xValue="47.4" yValue="1.0" atomRefs="a3" />
+      <peak xValue="38.1" yValue="1.0" atomRefs="a4" />
+      <peak xValue="41.1" yValue="1.0" atomRefs="a5" />
+      <peak xValue="31.5" yValue="1.0" atomRefs="a6" />
+      <peak xValue="31.6" yValue="1.0" atomRefs="a7" />
+      <peak xValue="20.9" yValue="1.0" atomRefs="a8" />
+      <peak xValue="26.5" yValue="1.0" atomRefs="a9" />
+      <peak xValue="22.9" yValue="1.0" atomRefs="a10" />
+    </peakList>
+    <metadataList>
+      <metadata dictRef="jcampdx:dotOBSERVENUCLEUS" content="13C" />
+    </metadataList>
+  </spectrum>
+</cml>

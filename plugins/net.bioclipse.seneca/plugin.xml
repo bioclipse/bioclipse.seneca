@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point
+   		id="SenecaJudge"
+   		name="Seneca Judge Exception Point"
+   		schema="schema/SenecaJudge.exsd"/>
+
+   <extension point="net.bioclipse.scripting.contribution">
+      <scriptContribution
+            id="net.bioclipse.seneca.business.SenecaManager"
+            service="net.bioclipse.seneca.business.SenecaManagerFactory">
+      </scriptContribution>
+   </extension>
+
+   <extension point="org.eclipse.help.toc">
+      <toc file="userHelp.xml" primary="true"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <category id="net.bioclipse.seneca" name="Seneca"/>
+
+	  <wizard canFinishEarly="false"
+         category="net.bioclipse.seneca"
+         class="net.bioclipse.seneca.wizard.NewSenecaJobWizard"
+         hasPages="true"
+         icon="icons/molecule16.gif"
+         id="net.bioclipse.plugins.wizards.NewSenecaJobResourceWizard"
+         name="New Seneca Job Specification">
+         <description>
+            Create a new Seneca Job Specification.
+         </description>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <editor
+            class="net.bioclipse.seneca.editor.SenecaJobEditor"
+            contributorClass="net.bioclipse.seneca.editor.SenecaJobEditorContributor"
+            extensions="sjs"
+            icon="icons/molecule16.gif"
+            id="net.bioclipse.seneca.editor.SenecaJobEditor"
+            name="Seneca Job Specification Editor"/>
+   </extension>
+
+   <!-- SENECA views -->
+
+   <extension point="org.eclipse.ui.views">
+      <category name="SENECA" id="net.bioclipse.seneca.category"/>
+      <view name="Elucidation Progress"
+	        icon="icons/molecule16.gif"
+            category="net.bioclipse.seneca.category"
+            class="net.bioclipse.seneca.views.BestStructureView"
+            id="net.bioclipse.seneca.views.BestStructureView">
+      </view>
+   </extension>
+
+   <!-- the judges -->
+
+ 	<!--extension
+         point="net.bioclipse.seneca.SenecaJudge">
+      <CASEJudge
+            class="net.bioclipse.seneca.judge.HHCOSYJudge"
+            id="HHCOSYJudge"
+            name="HHCOSYJudge"/>
+   </extension-->
+
+   <!--extension
+         point="net.bioclipse.seneca.SenecaJudge">
+      <CASEJudge
+            class="net.bioclipse.seneca.judge.WCCHOSECodeDEPTJudge"
+            id="WCCHOSECodeDEPTJudge"
+            name="WCCHOSECodeDEPTJudge"/>
+   </extension-->
+
+   <extension
+         point="net.bioclipse.seneca.SenecaJudge">
+      <CASEJudge
+            class="net.bioclipse.seneca.judge.WCCNMRShiftDBJudge"
+            id="WCCNMRShiftDBJudge"
+            name="WCCNMRShiftDBJudge"/>
+      <CASEJudge
+            class="net.bioclipse.seneca.judge.WCCHOSECodeJudge"
+            id="WCCHOSECodeJudge"
+            name="WCCHOSECodeJudge"/>
+   </extension>
+   
+   <extension point="org.eclipse.ui.perspectives">
+      <perspective name="Seneca"
+          class="net.bioclipse.seneca.SenecaPerspective"
+          id="net.bioclipse.seneca.SenecaPerspective"
+          icon="icons/molecule16.gif">
+      </perspective>
+   </extension>
+</plugin>

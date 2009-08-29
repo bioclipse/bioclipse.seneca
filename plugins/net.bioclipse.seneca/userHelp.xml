@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="SENECA">
+  <topic label="About SENECA" href="docs/about.html"/>
+  <topic label="The Deterministic Generator" href="docs/case1.html"/>
+  <topic label="Developer Documentation" href="docs/developer.html"/>
+</toc>
