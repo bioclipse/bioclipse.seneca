@@ -24,8 +24,10 @@ package net.bioclipse.seneca.judge;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import org.openscience.cdk.Molecule;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.smiles.SmilesGenerator;
 
 /**
  * Description of the Class
@@ -220,6 +222,7 @@ public abstract class TwoDSpectrumJudge extends Judge {
 				+ maxScore;
 		if (debug)
 			System.out.println(resultString);
+		SmilesGenerator sg = new SmilesGenerator();
 		return
 			new JudgeResult(maxScore, scoreSum, satisfiedSignals, resultString);
 	}

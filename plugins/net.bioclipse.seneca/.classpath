@@ -6,5 +6,6 @@
 	<classpathentry exported="true" kind="lib" path="jars/predictor.jar" sourcepath="net.bioclipse.senecasrc.zip"/>
 	<classpathentry kind="lib" path="jars/watchmaker-framework-0.6.0.jar" sourcepath="jars/watchmaker-framework-0.6.0-src.jar"/>
 	<classpathentry kind="lib" path="jars/uncommons-maths-1.2.jar"/>
+	<classpathentry kind="lib" path="jars/JSX1.0.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

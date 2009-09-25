@@ -32,13 +32,15 @@ Require-Bundle: org.eclipse.ui,
  net.bioclipse.chemoinformatics,
  org.eclipse.ui.ide,
  net.bioclipse.cdk.jchempaint,
- org.openscience.cdk.renderextra;bundle-version="1.3.0"
+ org.openscience.cdk.renderextra;bundle-version="1.3.0",
+ org.openscience.cdk.smiles;bundle-version="1.3.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: net.bioclipse.seneca.Activator
 Bundle-ClassPath: jars/predictor.jar,
  .,
  jars/uncommons-maths-1.2.jar,
- jars/watchmaker-framework-0.6.0.jar
+ jars/watchmaker-framework-0.6.0.jar,
+ jars/JSX1.0.1.1.jar
 Export-Package: net.bioclipse.seneca,
  net.bioclipse.seneca.anneal,
  net.bioclipse.seneca.business,

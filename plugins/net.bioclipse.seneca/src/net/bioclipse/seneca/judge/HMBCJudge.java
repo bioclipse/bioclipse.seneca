@@ -21,10 +21,16 @@
 
 package net.bioclipse.seneca.judge;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
-import org.xmlcml.cml.base.CMLElement;
+
+import JSX.ObjIn;
 
 /**
  * Gets the AllPairsShortestPath matrix for a given structure and checks if all
@@ -44,28 +50,38 @@ public class HMBCJudge extends TwoDSpectrumJudge {
 		setScore(5, 2);
 	}
 
-	public void configure(CMLElement input) {
-		// TODO Auto-generated method stub
-	}
 
 	public IJudge createJudge(IPath data) throws MissingInformationException {
-		IJudge judge = new HMBCJudge();
-		//TODO use data
-		//judge.configure(input);
-		judge.setEnabled(true);
-		return judge;
+		//IJudge judge = new HMBCJudge();
+		this.setData( data );
+		
+		try {
+			IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
+	    Reader reader = new InputStreamReader(root.getFile(data).getContents());
+	    ObjIn in;
+			in = new ObjIn(reader);
+	    HMBCJudge obj = (HMBCJudge)in.readObject();
+	    
+		this.setScores(obj.scores);
+		this.setAssignment(obj.assignment);
+		this.init();
+		this.setEnabled(true);
+		return this;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MissingInformationException(e.getMessage());
+		}
 	}
 
     public String getDescription() {
-
-        // TODO Auto-generated method stub
-        return null;
+    	return "A simple 2d HMBC judge. Configuration is in a jsx file right now";
     }
 
     public boolean checkJudge( String data ) {
 
-        // TODO Auto-generated method stub
-        return false;
+        // TODO implement a check
+        return true;
     }
 
     public IFile setData( ISelection selection, IFile sjsFile ) {
