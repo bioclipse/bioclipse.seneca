@@ -35,7 +35,7 @@ import org.openscience.cdk.smiles.SmilesGenerator;
  * @author steinbeck
  * @created October 6, 2001
  */
-public abstract class TwoDSpectrumJudge extends Judge {
+public abstract class TwoDSpectrumJudge extends AbstractJudge {
 
 	/**
 	 * Description of the Field
@@ -223,6 +223,7 @@ public abstract class TwoDSpectrumJudge extends Judge {
 		if (debug)
 			System.out.println(resultString);
 		SmilesGenerator sg = new SmilesGenerator();
+		System.err.println(maxScore+" "+scoreSum);
 		return
 			new JudgeResult(maxScore, scoreSum, satisfiedSignals, resultString);
 	}

@@ -209,7 +209,7 @@ public class StochasticStructureElucidationJob implements StateListener,
 
         this.temperature = temp;
         for ( TemperatureAndScoreListener templistener : temperatureListeners ) {
-            templistener.change( temp, 1 - aa.getBestCost() );
+            templistener.change( temp, (chiefJustice.calcMaxScore() - aa.getBestCost())/chiefJustice.calcMaxScore() );
         }
     }
 

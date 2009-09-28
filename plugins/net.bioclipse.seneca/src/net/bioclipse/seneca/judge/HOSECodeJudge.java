@@ -38,7 +38,7 @@ import org.xmlcml.cml.base.CMLElement;
  * state and hetero attachments
  */
 
-public class HOSECodeJudge extends Judge {
+public class HOSECodeJudge extends AbstractJudge {
 
 	public int score = 100; // Score for optimum fit of exp. with calc. shift
 	protected transient HOSECodeGenerator hcg;

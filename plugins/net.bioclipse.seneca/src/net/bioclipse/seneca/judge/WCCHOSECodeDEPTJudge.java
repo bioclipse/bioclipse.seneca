@@ -50,7 +50,7 @@ import org.xmlcml.cml.element.CMLSpectrum;
  * carbon atom environment is in the correct range with respect to hybridization
  * state and hetero attachments
  */
-public class WCCHOSECodeDEPTJudge extends Judge implements IJudge {
+public class WCCHOSECodeDEPTJudge extends AbstractJudge implements IJudge {
 
 	public double score = 1000; // Score for optimum fit of exp. with calc.
 								// shift

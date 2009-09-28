@@ -78,7 +78,7 @@ import spok.utils.SpectrumUtils;
  * carbon atom environment is in the correct range with respect to hybridization
  * state and hetero attachments
  */
-public class WCCHOSECodeJudge extends Judge implements IJudge {
+public class WCCHOSECodeJudge extends AbstractJudge implements IJudge {
 
   private static Logger logger = Logger.getLogger(WCCNMRShiftDBJudge.class);
 

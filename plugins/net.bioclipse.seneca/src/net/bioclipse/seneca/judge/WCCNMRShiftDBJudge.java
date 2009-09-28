@@ -73,7 +73,7 @@ import spok.utils.SpectrumUtils;
  * Calculates a score via a prediction based on NMRShiftDB data. This should 
  * normally work well with a standard 13C spectrum.
  */
-public class WCCNMRShiftDBJudge extends Judge implements IJudge {
+public class WCCNMRShiftDBJudge extends AbstractJudge implements IJudge {
 
   private static Logger logger = Logger.getLogger(WCCNMRShiftDBJudge.class);
 
@@ -119,10 +119,6 @@ public class WCCNMRShiftDBJudge extends Judge implements IJudge {
     } catch ( CoreException e ) {
         throw new MissingInformationException(e.getMessage());
     }
-	}
-
-	public void setScore(int s) {
-		// XXX ?
 	}
 
 	/**

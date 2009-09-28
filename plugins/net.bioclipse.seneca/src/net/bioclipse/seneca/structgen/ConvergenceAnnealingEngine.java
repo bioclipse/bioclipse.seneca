@@ -280,6 +280,10 @@ public class ConvergenceAnnealingEngine implements IAnnealingEngine {
 		this.start_kT = skt;
 	}
 
+	public double getStart_kT() {
+		return start_kT;
+	}
+
 	/**
 	 * Sets the Current Temperature attribute of the ConvergenceAnnealingEngine
 	 * object

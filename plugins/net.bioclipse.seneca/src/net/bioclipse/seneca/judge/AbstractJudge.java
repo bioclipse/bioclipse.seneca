@@ -33,7 +33,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @created October 5, 2001
  */
 
-public abstract class Judge implements IJudge {
+public abstract class AbstractJudge implements IJudge {
 
 	/*
 	 * A name identifying the scope of the Judge
@@ -70,7 +70,7 @@ public abstract class Judge implements IJudge {
 	 * @param name
 	 *            Description of Parameter
 	 */
-	public Judge(String name) {
+	public AbstractJudge(String name) {
 		this.name = name;
 	}
 
@@ -243,5 +243,8 @@ public abstract class Judge implements IJudge {
   public void setData( IPath data ) {
       this.datafile=data;
   }
+  
+  abstract public IJudge createJudge(IPath data)
+	throws MissingInformationException;
 
 }

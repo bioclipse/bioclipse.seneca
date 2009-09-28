@@ -85,9 +85,8 @@ public class HMBCJudge extends TwoDSpectrumJudge {
     }
 
     public IFile setData( ISelection selection, IFile sjsFile ) {
-
-        // TODO Auto-generated method stub
-        return null;
+    	//We do nothing to the data right now
+        return sjsFile;
     }
 
 }

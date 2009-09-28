@@ -200,7 +200,7 @@ public class UserConfigurableStochasticStructureElucidationJob implements ICASEJ
         monitor.worked(1);
         stepsDone++;
         for(TemperatureAndScoreListener templistener : temperatureListeners){
-            templistener.change( annealingEngine.getTemperature(), bestScore.score );
+            templistener.change( annealingEngine.getTemperature()/((ConvergenceAnnealingEngine)annealingEngine).getStart_kT(), bestScore.score/chiefJustice.calcMaxScore() );
         }
 //        Thread.sleep(5);
       } while (!annealingEngine.isFinished() && !monitor.isCanceled());

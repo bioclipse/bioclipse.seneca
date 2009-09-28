@@ -38,7 +38,7 @@ import org.xmlcml.cml.base.CMLElement;
  * no) scores for unwanted bond orders
  */
 
-public class SymmetryJudge extends Judge implements Serializable, Cloneable {
+public class SymmetryJudge extends AbstractJudge implements Serializable, Cloneable {
 
 	protected ArrayList symmetryClassesArrayList;
 	protected SymmetryClass[] symmetryClasses;
