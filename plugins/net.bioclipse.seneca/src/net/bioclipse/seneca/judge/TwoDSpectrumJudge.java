@@ -122,6 +122,7 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 	 * Judges vector, in order for it to function properly
 	 */
 	public void init() {
+		rules.clear();
 		for (int f = 0; f < assignment.length; f++) {
 			for (int g = 0; g < assignment.length; g++) {
 				for (int h = 0; h < assignment.length; h++) {
@@ -222,8 +223,6 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 				+ maxScore;
 		if (debug)
 			System.out.println(resultString);
-		SmilesGenerator sg = new SmilesGenerator();
-		System.err.println(maxScore+" "+scoreSum);
 		return
 			new JudgeResult(maxScore, scoreSum, satisfiedSignals, resultString);
 	}
