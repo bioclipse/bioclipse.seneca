@@ -183,7 +183,7 @@ public class StochasticStructureElucidationJob implements StateListener,
         MoleculeState moleculeState = (MoleculeState) state;
         if ( moleculeState.acceptance == Acceptance.ACCEPT ) {
             org.openscience.cdk.interfaces.IMolecule best = aa.getBest();
-            best.setProperty( "Score", 1 - aa.getBestCost() );
+            best.setProperty( "Score", (chiefJustice.calcMaxScore() - aa.getBestCost())/chiefJustice.calcMaxScore() );
             best.setProperty( "Steps so far", aa.getBestStepIndex() );
             best.setProperty( "Temperature", this.temperature );
             sgr.structures.push( best );
@@ -192,7 +192,7 @@ public class StochasticStructureElucidationJob implements StateListener,
             }
         } else if ( moleculeState.acceptance == Acceptance.UNKNOWN ) {
             this.monitor.subTask( "Best score: "
-                                  + (1 - aa.getBestCost())
+                                  + (chiefJustice.calcMaxScore() - aa.getBestCost())/chiefJustice.calcMaxScore()
                                   + ", T="
                                   + new FormatStringBuffer( "%.3f" )
                                           .format( this.temperature ) + ", s="

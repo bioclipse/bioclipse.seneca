@@ -122,6 +122,7 @@ public class GAStructureElucidationJob implements StateListener, ICASEJob {
 
         try {
 
+        	monitor.beginTask( "Initializing", 1000 );
             CandidateFactory<IMolecule> factory =
                     new MoleculeCandidateFactory( initialContainer,
                                                   detectAromaticity );
