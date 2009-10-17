@@ -24,13 +24,6 @@ public interface IJudge {
 	public abstract void setName(String name);
 
 	/**
-	 *  Sets the Multiplicator attribute of the Judge object
-	 *
-	 * @param  multiplicator  The new Multiplicator value
-	 */
-	public abstract void setMultiplicator(int multiplicator);
-
-	/**
 	 *  Sets the Enabled attribute of the Judge object
 	 *
 	 * @param  enabled  The new Enabled value
@@ -78,13 +71,6 @@ public interface IJudge {
 	 * @return    The Initialized value
 	 */
 	public abstract boolean isInitialized();
-
-	/**
-	 *  Gets the Multiplicator attribute of the Judge object
-	 *
-	 * @return    The Multiplicator value
-	 */
-	public abstract int getMultiplicator();
 
 	/**
 	 *  Gets the Name attribute of the Judge object
@@ -139,11 +125,20 @@ public interface IJudge {
 	 *  Description of the Method
 	 */
 	public abstract void fireChanged();
-
-	public boolean[][][] getAssignment();
 	
+	/**
+	 * Sets the path to the data file on this judge. The is called when a configured judge 
+	 * is created. See setData(ISelection, IFile for configuring the judge.
+	 * 
+	 * @param data The data file to be used by this judge.
+	 */
 	public void setData(IPath data);
 	
+	/**
+	 * Tells the path to the data file this judge uses.
+	 * 
+	 * @return The data file used by this judge.
+	 */
 	public IPath getData();
 	
 	/**
@@ -160,11 +155,31 @@ public interface IJudge {
 	 * This method is called by the editor if files are dropped onto the editor 
 	 * section for that judge. The judge needs to check if data are correct (right 
 	 * spectrum type etc.), perform any analyses (peak picking etc.) and return 
-	 * the file where the processed data have been put into.
+	 * the file where the processed data have been put into. The returned file 
+	 * must be set with setData(IPath) on the judge to run it.
 	 *  
 	 * @param selection The selectoon the user dropped on the configuration page.
 	 * @return The file where processed data are in.
 	 */
 	public IFile setData(ISelection selection, IFile sjsFile);
+
+
+	/**
+	 * If this return true, labelStartStructure must be called before this judge
+	 * is exectued.
+	 * 
+	 * @return true=labelStartStructure must be called, false=not needed.
+	 */
+	public abstract boolean isLabelling();
+
+
+	/**
+	 * The judge can do labelling (or any other non-destructive operation ) on
+	 * this startStructure in this operation. The judge must return true for 
+	 * isLabelling if it wants to make use of this.
+	 * 
+	 * @param startStructure The structure to label.
+	 */
+	public abstract void labelStartStructure(IAtomContainer startStructure);
 
 }

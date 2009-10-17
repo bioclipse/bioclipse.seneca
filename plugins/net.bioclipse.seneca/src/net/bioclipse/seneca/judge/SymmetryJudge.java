@@ -201,4 +201,11 @@ public class SymmetryJudge extends AbstractJudge implements Serializable, Clonea
         return null;
     }
 
+	public boolean isLabelling() {
+		return false;
+	}
+
+	public void labelStartStructure(IAtomContainer startStructure) {
+	}
+
 }

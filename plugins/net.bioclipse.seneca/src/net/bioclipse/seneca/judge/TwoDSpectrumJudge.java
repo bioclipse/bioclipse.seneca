@@ -21,13 +21,17 @@
  */
 package net.bioclipse.seneca.judge;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
-import org.openscience.cdk.Molecule;
+import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.PathTools;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.io.MDLWriter;
 
 /**
  * Description of the Class
@@ -40,7 +44,7 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 	/**
 	 * Description of the Field
 	 */
-	boolean[][][] assignment;
+	List<TwoDRule> couplings;
 	/**
 	 * Description of the Field
 	 */
@@ -49,13 +53,7 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 	/**
 	 * Description of the Field
 	 */
-	ArrayList rules = new ArrayList();
-	/**
-	 * Description of the Field
-	 */
-	protected int numberOf2DSignals = 0;
 	private int cutOff;
-	Vector sphere = null;
 
 	/**
 	 * Constructor for the TwoDSpectrumJudge object
@@ -69,7 +67,6 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 			scores[i] = 0;
 		}
 		hasMaxScore = true;
-		sphere = new Vector();
 		// debug = true;
 	}
 
@@ -81,6 +78,7 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 	 */
 	public void setScores(int[] scores) {
 		this.scores = scores;
+		init();
 	}
 
 	/**
@@ -96,6 +94,7 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 			return;
 		}
 		scores[position] = score;
+		init();
 	}
 
 	/**
@@ -122,16 +121,6 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 	 * Judges vector, in order for it to function properly
 	 */
 	public void init() {
-		rules.clear();
-		for (int f = 0; f < assignment.length; f++) {
-			for (int g = 0; g < assignment.length; g++) {
-				for (int h = 0; h < assignment.length; h++) {
-					if (assignment[f][g][h]) {
-						rules.add(new TwoDRule(f, h));
-					}
-				}
-			}
-		}
 		for (int i = 0; i < scores.length; i++) {
 			if (scores[i] > 0) {
 				cutOff = i + 1;
@@ -152,17 +141,7 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 				max = scores[f];
 			}
 		}
-		numberOf2DSignals = 0;
-		for (int f = 0; f < assignment.length; f++) {
-			for (int g = 0; g < assignment.length; g++) {
-				for (int h = 0; h < assignment.length; h++) {
-					if (assignment[f][g][h]) {
-						numberOf2DSignals += 1;
-					}
-				}
-			}
-		}
-		maxScore = numberOf2DSignals * max;
+		maxScore = couplings.size() * max;
 		if (debug)
 			System.out.println("MaxScore in " + getName() + " set to "
 					+ maxScore);
@@ -176,37 +155,46 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 	 * @return Description of the Returned Value
 	 */
 	public JudgeResult evaluate(IAtomContainer ac) {
-		if (assignment == null) {
+		if (couplings == null) {
 			resultString = "No signals available for " + name;
 			return new JudgeResult(0, 0, 0, resultString);
 		}
 		scoreSum = 0;
 		int satisfiedSignals = 0;
 		int plength = 0;
-		TwoDRule rule;
 		if (debug) {
 			System.out.println("TwoDSpectrumJudge->evaluate()->rules.size(): "
-					+ rules.size());
+					+ couplings.size());
 		}
 		if (debug) {
 			System.out.println(ac);
 		}
 
-		for (int f = 0; f < rules.size(); f++) {
-			rule = (TwoDRule) rules.get(f);
-			sphere.clear();
+		Iterator<TwoDRule> it = couplings.iterator();
+		while(it.hasNext()){
+			TwoDRule cvalue = it.next();
 			if (debug) {
 				System.out
 						.println("TwoDSpectrumJudge->evaluate()->rule.atom1: "
-								+ rule.atom1);
+								+ cvalue.value1);
 				System.out
 						.println("TwoDSpectrumJudge->evaluate()->rule.atom2: "
-								+ rule.atom2);
+								+ cvalue.value2);
 			}
-			sphere.add(ac.getAtom(rule.atom1));
-			plength =
+			List<IAtom> sphere = new ArrayList<IAtom>();
+			sphere.add(findAtom(cvalue.value1, ac));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			MDLWriter writer = new MDLWriter(baos);
+			try {
+				writer.write(ac);
+			} catch (CDKException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.err.println(baos.toString());
+			plength = 
 				PathTools.breadthFirstTargetSearch(
-						ac, sphere, ac.getAtom(rule.atom2), 0, cutOff);
+						ac, sphere, findAtom(cvalue.value2, ac), 0, cutOff);
 			if (debug)
 				System.out.println("TwoDSpectrumJudge->evaluate()->plength: "
 						+ plength);
@@ -218,13 +206,24 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 			}
 
 		}
-		resultString = satisfiedSignals + "/" + numberOf2DSignals
+		resultString = satisfiedSignals + "/" + couplings.size()
 				+ " Signals satisfied in " + name + ". Score " + scoreSum + "/"
 				+ maxScore;
 		if (debug)
 			System.out.println(resultString);
 		return
 			new JudgeResult(maxScore, scoreSum, satisfiedSignals, resultString);
+	}
+
+	private IAtom findAtom(double value1, IAtomContainer ac) {
+		for(int i=0;i<ac.getAtomCount();i++){
+			if((Double)ac.getAtom(i).getProperty(HMBCJudge.C_SHIFT)==value1
+					|| (ac.getAtom(i).getProperty(HMBCJudge.H_SHIFT)!=null && (Double)ac.getAtom(i).getProperty(HMBCJudge.H_SHIFT)==value1)
+				    || (ac.getAtom(i).getProperty(HMBCJudge.H_SHIFT_2)!=null && (Double)ac.getAtom(i).getProperty(HMBCJudge.H_SHIFT_2)==value1)){
+				return ac.getAtom(i);
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -234,72 +233,40 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		if (name == null || assignment == null) {
+		if (name == null || couplings == null) {
 			return "";
 		}
 		sb.append("Configuration of TwoDSpectrumJudge " + name + ":\n");
 		sb.append("Listing relation of nuclei by number...\n");
-		for (int f = 0; f < assignment.length; f++) {
-			for (int g = 0; g < assignment.length; g++) {
-				for (int h = 0; h < assignment.length; h++) {
-					if (assignment[f][g][h]) {
-						sb.append(f + "-" + h + "\n");
-					}
-				}
-			}
+		Iterator<TwoDRule> it = couplings.iterator();
+		while(it.hasNext()){
+			TwoDRule cvalue = it.next();
+			sb.append(cvalue.value1 + "-" + cvalue.value2 + "\n");
 		}
 		sb.append("End of listing");
 		return sb.toString();
 	}
 
-	public boolean[][][] getAssignment() {
-		return assignment;
-	}
-
-	public void setAssignment(boolean[][][] assignment) {
-		this.assignment = assignment;
-	}
-
 	public int getNumberOf2DSignals() {
-		return numberOf2DSignals;
-	}
-
-	public void setNumberOf2DSignals(int numberOf2DSignals) {
-		this.numberOf2DSignals = numberOf2DSignals;
-	}
-
-	public ArrayList getRules() {
-		return rules;
-	}
-
-	public void setRules(ArrayList rules) {
-		this.rules = rules;
-	}
-
-	public Vector getSphere() {
-		return sphere;
-	}
-
-	public void setSphere(Vector sphere) {
-		this.sphere = sphere;
+		return couplings.size();
 	}
 
 	public int[] getScores() {
 		return scores;
 	}
-
+	
 	public class TwoDRule {
-		int atom1;
-		int atom2;
+		double value1;
+		double value2;
 
 		public TwoDRule(TwoDRule other) {
-			this.atom1 = other.atom1;
-			this.atom2 = other.atom2;
+			this.value1 = other.value1;
+			this.value2 = other.value2;
 		}
 
-		public TwoDRule(int a1, int a2) {
-			this.atom1 = a1;
-			this.atom2 = a2;
+		public TwoDRule(double a1, double a2) {
+			this.value1 = a1;
+			this.value2 = a2;
 		}
 
 	}

@@ -21,16 +21,22 @@
 
 package net.bioclipse.seneca.judge;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.util.ArrayList;
+
+import nu.xom.Document;
+import nu.xom.Elements;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.xmlcml.cml.base.CMLBuilder;
+import org.xmlcml.cml.base.CMLUtil;
+import org.xmlcml.cml.element.CMLCml;
+import org.xmlcml.cml.element.CMLSpectrum;
 
-import JSX.ObjIn;
+import spok.utils.SpectrumUtils;
 
 /**
  * Gets the AllPairsShortestPath matrix for a given structure and checks if all
@@ -43,6 +49,11 @@ import JSX.ObjIn;
 
 public class HMBCJudge extends TwoDSpectrumJudge {
 
+	CMLCml cmlcml;
+	static final String C_SHIFT="C_SHIFT";
+	static final String H_SHIFT="H_SHIFT";
+	static final String H_SHIFT_2="H_SHIFT_2";
+	
 	public HMBCJudge() {
 		super("HMBCJudge");
 		setScore(100, 0);
@@ -52,26 +63,28 @@ public class HMBCJudge extends TwoDSpectrumJudge {
 
 
 	public IJudge createJudge(IPath data) throws MissingInformationException {
-		//IJudge judge = new HMBCJudge();
 		this.setData( data );
-		
-		try {
-			IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
-	    Reader reader = new InputStreamReader(root.getFile(data).getContents());
-	    ObjIn in;
-			in = new ObjIn(reader);
-	    HMBCJudge obj = (HMBCJudge)in.readObject();
-	    
-		this.setScores(obj.scores);
-		this.setAssignment(obj.assignment);
-		this.init();
-		this.setEnabled(true);
-		return this;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new MissingInformationException(e.getMessage());
-		}
+        CMLBuilder builder = new CMLBuilder();
+        try{
+            Document doc =  builder.buildEnsureCML(ResourcesPlugin.getWorkspace().getRoot().getFile( data).getContents());
+            SpectrumUtils.namespaceThemAll( doc.getRootElement().getChildElements() );
+            doc.getRootElement().setNamespaceURI(CMLUtil.CML_NS);
+            cmlcml = (CMLCml)builder.parseString(doc.toXML());
+            couplings = new ArrayList<TwoDRule>();
+    		//using the hmbc spectrum, we build couplings.
+    		Elements spectra = cmlcml.getChildCMLElements("spectrum");
+    		for(int i=0;i<spectra.size();i++){
+    			CMLSpectrum spectrum = (CMLSpectrum)spectra.get(i);
+    			if(spectrum.getType().equals("HMBC")){
+    				for(int k=0;k<spectrum.getPeakListElements().get(0).getPeakElements().size();k++){
+    					couplings.add(new TwoDRule(spectrum.getPeakListElements().get(0).getPeakElements().get(k).getXValue(), spectrum.getPeakListElements().get(0).getPeakElements().get(k).getYValue()));
+    				}
+    			}
+    		}
+            return this;
+        }catch(Exception ex){
+            throw new MissingInformationException("Could not read the cmlString.");
+        }
 	}
 
     public String getDescription() {
@@ -89,4 +102,46 @@ public class HMBCJudge extends TwoDSpectrumJudge {
         return sjsFile;
     }
 
+
+	public boolean isLabelling() {
+		return true;
+	}
+
+
+	public void labelStartStructure(IAtomContainer startStructure) {
+		//using the bb+hsqc spectrum, we assign c and h labels.
+		Elements spectra = cmlcml.getChildCMLElements("spectrum");
+		for(int i=0;i<spectra.size();i++){
+			CMLSpectrum spectrum = (CMLSpectrum)spectra.get(i);
+			if(spectrum.getType().equals("NMR")){
+				for(int k=0;k<spectrum.getPeakListElements().get(0).getPeakElements().size();k++){
+					for(int l=0;l<startStructure.getAtomCount();l++){
+						if(startStructure.getAtom(l).getProperty(C_SHIFT)==null && startStructure.getAtom(l).getHydrogenCount()==Integer.parseInt(spectrum.getPeakListElements().get(0).getPeakElements().get(k).getAttributeValue("multiplicity"))){
+							startStructure.getAtom(l).setProperty(C_SHIFT,spectrum.getPeakListElements().get(0).getPeakElements().get(k).getXValue());
+							break;
+						}
+					}
+				}
+			}
+		}
+		for(int i=0;i<spectra.size();i++){
+			CMLSpectrum spectrum = (CMLSpectrum)spectra.get(i);
+			if(spectrum.getType().equals("HSQC")){
+				for(int k=0;k<spectrum.getPeakListElements().get(0).getPeakElements().size();k++){
+					for(int l=0;l<startStructure.getAtomCount();l++){
+						if((Double)startStructure.getAtom(l).getProperty(C_SHIFT)==spectrum.getPeakListElements().get(0).getPeakElements().get(k).getXValue()){
+							if(startStructure.getAtom(l).getProperty(H_SHIFT)==null)
+								startStructure.getAtom(l).setProperty(H_SHIFT,spectrum.getPeakListElements().get(0).getPeakElements().get(k).getYValue());
+							else
+								startStructure.getAtom(l).setProperty(H_SHIFT_2,spectrum.getPeakListElements().get(0).getPeakElements().get(k).getYValue());
+							break;
+						}
+					}
+				}
+			}
+		}
+		/*for(int l=0;l<startStructure.getAtomCount();l++){
+			System.err.println(startStructure.getAtom(l).getProperty(C_SHIFT)+" "+startStructure.getAtom(l).getProperty(H_SHIFT)+" "+startStructure.getAtom(l).getProperty(H_SHIFT_2));
+		}*/
+	}
 }

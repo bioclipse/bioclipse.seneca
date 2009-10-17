@@ -24,6 +24,7 @@ package net.bioclipse.seneca.judge;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
+import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  * Gets the AllPairsShortestPath matrix for a given structure and checks if all
@@ -66,4 +67,14 @@ public class HHCOSYJudge extends TwoDSpectrumJudge {
         // TODO Auto-generated method stub
         return null;
     }
+
+	public boolean isLabelling() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void labelStartStructure(IAtomContainer startStructure) {
+		// TODO Auto-generated method stub
+		
+	}
 }

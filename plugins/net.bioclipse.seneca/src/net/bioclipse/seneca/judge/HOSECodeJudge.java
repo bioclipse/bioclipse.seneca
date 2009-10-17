@@ -150,4 +150,11 @@ public class HOSECodeJudge extends AbstractJudge {
         return null;
     }
 
+	public boolean isLabelling() {
+		return false;
+	}
+
+	public void labelStartStructure(IAtomContainer startStructure) {
+	}
+
 }

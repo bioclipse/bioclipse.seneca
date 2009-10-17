@@ -117,36 +117,36 @@ public class SenecaManager implements IBioclipseManager {
 	                       throws BioclipseException{
 	    String generatorID = jobSpec.getGenerator();
 	    ICASEJob job = null;
+        //We take start start structure from the formula and use 
+        //the DEPT information if any
+        IAtomContainer startStructure 
+            = DefaultChemObjectBuilder.getInstance().newAtomContainer();
+        IMolecularFormula formula 
+            = MolecularFormulaManipulator.getMolecularFormula( 
+                  jobSpec.getMolecularFormula(),
+                  startStructure.getBuilder() );
+        for(int i=0;i<4;i++){
+            int atomcount = jobSpec.getDeptData( i );
+            for(int k=0;k<atomcount;k++){
+              IAtom atom = startStructure.getBuilder().newAtom( "C" );
+              atom.setHydrogenCount( i );
+              startStructure.addAtom( atom );
+              formula.removeIsotope( 
+                  startStructure.getBuilder().newIsotope( "C" ) );
+              for(int l=0;l<i;l++){
+                  formula.removeIsotope( 
+                      startStructure.getBuilder().newIsotope( "H" ) );
+              }
+            }
+        }
+        IAtomContainer residue 
+            = MolecularFormulaManipulator.getAtomContainer( formula );
+        for(IAtom atom : residue.atoms())
+            atom.setHydrogenCount( 0 );
+        startStructure.add( residue );
 	    if (generatorID != null) {
 	      if (StructureGeneratorSettingsPage.generatorName
 	          .equals(generatorID)) {
-	          //We take start start structure from the formula and use 
-	          //the DEPT information if any
-            IAtomContainer startStructure 
-                = DefaultChemObjectBuilder.getInstance().newAtomContainer();
-            IMolecularFormula formula 
-                = MolecularFormulaManipulator.getMolecularFormula( 
-                      jobSpec.getMolecularFormula(),
-                      startStructure.getBuilder() );
-            for(int i=0;i<4;i++){
-                int atomcount = jobSpec.getDeptData( i );
-                for(int k=0;k<atomcount;k++){
-                  IAtom atom = startStructure.getBuilder().newAtom( "C" );
-                  atom.setHydrogenCount( i );
-                  startStructure.addAtom( atom );
-                  formula.removeIsotope( 
-                      startStructure.getBuilder().newIsotope( "C" ) );
-                  for(int l=0;l<i;l++){
-                      formula.removeIsotope( 
-                          startStructure.getBuilder().newIsotope( "H" ) );
-                  }
-                }
-            }
-            IAtomContainer residue 
-                = MolecularFormulaManipulator.getAtomContainer( formula );
-            for(IAtom atom : residue.atoms())
-                atom.setHydrogenCount( 0 );
-            startStructure.add( residue );
   	        job = new StochasticStructureElucidationJob( 
   	                  startStructure, 
   	                  Integer.parseInt( 
@@ -155,33 +155,6 @@ public class SenecaManager implements IBioclipseManager {
   	                          "numberSteps")));
 	      } else if (StructureGeneratorSettingsPage.generatorNameUserConfigurable
                 .equals(generatorID)) {
-            //We take start start structure from the formula and use 
-            //the DEPT information if any
-            IAtomContainer startStructure 
-                = DefaultChemObjectBuilder.getInstance().newAtomContainer();
-            IMolecularFormula formula 
-                = MolecularFormulaManipulator.getMolecularFormula( 
-                      jobSpec.getMolecularFormula(),
-                      startStructure.getBuilder() );
-            for(int i=0;i<4;i++){
-                int atomcount = jobSpec.getDeptData( i );
-                for(int k=0;k<atomcount;k++){
-                  IAtom atom = startStructure.getBuilder().newAtom( "C" );
-                  atom.setHydrogenCount( i );
-                  startStructure.addAtom( atom );
-                  formula.removeIsotope( 
-                      startStructure.getBuilder().newIsotope( "C" ) );
-                  for(int l=0;l<i;l++){
-                      formula.removeIsotope( 
-                          startStructure.getBuilder().newIsotope( "H" ) );
-                  }
-                }
-            }
-            IAtomContainer residue 
-                = MolecularFormulaManipulator.getAtomContainer( formula );
-            for(IAtom atom : residue.atoms())
-                atom.setHydrogenCount( 0 );
-            startStructure.add( residue );
             job = new UserConfigurableStochasticStructureElucidationJob( 
                       startStructure);
         } 
@@ -191,33 +164,6 @@ public class SenecaManager implements IBioclipseManager {
   	        //    .getJobTitle());
 	      }else if(StructureGeneratorSettingsPage.
 	              gaGeneratorName.equals( generatorID )){
-            //We take start start structure from the formula and use 
-            //the DEPT information if any
-            IAtomContainer startStructure 
-                = DefaultChemObjectBuilder.getInstance().newAtomContainer();
-            IMolecularFormula formula 
-                = MolecularFormulaManipulator.getMolecularFormula( 
-                      jobSpec.getMolecularFormula(),
-                      startStructure.getBuilder() );
-            for(int i=0;i<4;i++){
-                int atomcount = jobSpec.getDeptData( i );
-                for(int k=0;k<atomcount;k++){
-                  IAtom atom = startStructure.getBuilder().newAtom( "C" );
-                  atom.setHydrogenCount( i );
-                  startStructure.addAtom( atom );
-                  formula.removeIsotope( 
-                      startStructure.getBuilder().newIsotope( "C" ) );
-                  for(int l=0;l<i;l++){
-                      formula.removeIsotope( 
-                          startStructure.getBuilder().newIsotope( "H" ) );
-                  }
-                }
-            }
-            IAtomContainer residue 
-                = MolecularFormulaManipulator.getAtomContainer( formula );
-            for(IAtom atom : residue.atoms())
-                atom.setHydrogenCount( 0 );
-            startStructure.add( residue );
             job = new GAStructureElucidationJob( 
                       jobSpec.getJobTitle(),  
                       startStructure);
@@ -245,6 +191,8 @@ public class SenecaManager implements IBioclipseManager {
                                     + File.separator 
                                     + jobSpec.getJudgesData().get( judgeID)));
                 judge.setEnabled( true );
+                if(judge.isLabelling())
+                	judge.labelStartStructure(startStructure);
                 job.addJudge( judge );
               } catch (MissingInformationException e) {
                   throw new BioclipseException(e.getMessage(),e);

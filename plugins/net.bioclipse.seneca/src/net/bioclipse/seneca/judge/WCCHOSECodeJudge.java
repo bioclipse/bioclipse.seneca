@@ -173,10 +173,6 @@ public class WCCHOSECodeJudge extends AbstractJudge implements IJudge {
 		return new JudgeResult(maxScore, scoreSum, 0, message);
 	}
 
-	public boolean[][][] getAssignment() {
-		return null;
-	}
-
 	public double shiftwcc(double[] positions1, double[] positions2,
 			double width) {
 		// one carbon per peak
@@ -360,5 +356,12 @@ public class WCCHOSECodeJudge extends AbstractJudge implements IJudge {
             }
         }
     }
+
+	public boolean isLabelling() {
+		return false;
+	}
+
+	public void labelStartStructure(IAtomContainer startStructure) {
+	}
 
 }

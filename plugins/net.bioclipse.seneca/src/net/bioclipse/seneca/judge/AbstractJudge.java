@@ -52,7 +52,6 @@ public abstract class AbstractJudge implements IJudge {
 	int[][] connectionTable;
 	double score, maxScore, scoreSum;
 	String resultString;
-	int multiplicator;
 	transient JudgeListener judgeListener = null;
 
 	/*
@@ -81,15 +80,6 @@ public abstract class AbstractJudge implements IJudge {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see seneca.judges.IJudge#setMultiplicator(int)
-	 */
-	public void setMultiplicator(int multiplicator) {
-		this.multiplicator = multiplicator;
 	}
 
 	/*
@@ -154,15 +144,6 @@ public abstract class AbstractJudge implements IJudge {
 	 */
 	public boolean isInitialized() {
 		return initialized;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see seneca.judges.IJudge#getMultiplicator()
-	 */
-	public int getMultiplicator() {
-		return this.multiplicator;
 	}
 
 	/*

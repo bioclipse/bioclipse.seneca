@@ -1,0 +1,59 @@
+<cml xmlns="http://www.xml-cml.org/schema">
+  <spectrum type="NMR">
+    <peakList>
+      <peak xValue="116.3" yValue="1.0" multiplicity="1" />
+      <peak xValue="144.5" yValue="1.0" multiplicity="0" />
+      <peak xValue="47.4" yValue="1.0" multiplicity="1" />
+      <peak xValue="38.1" yValue="1.0" multiplicity="0" />
+      <peak xValue="41.1" yValue="1.0" multiplicity="1" />
+      <peak xValue="31.5" yValue="1.0" multiplicity="2" />
+      <peak xValue="31.6" yValue="1.0" multiplicity="2" />
+      <peak xValue="20.9" yValue="1.0" multiplicity="3" />
+      <peak xValue="26.5" yValue="1.0" multiplicity="3" />
+      <peak xValue="22.9" yValue="1.0" multiplicity="3" />
+    </peakList>
+    <metadataList>
+      <metadata dictRef="jcampdx:dotOBSERVENUCLEUS" content="13C" />
+    </metadataList>
+  </spectrum>
+  <spectrum type="HSQC">
+    <peakList>
+      <peak xValue="116.3" yValue="5.17" />
+      <peak xValue="47.4" yValue="1.93" />
+      <peak xValue="31.5" yValue="1.16" />
+      <peak xValue="41.1" yValue="2.06" />
+      <peak xValue="31.5" yValue="2.34" />
+      <peak xValue="31.6" yValue="2.19" />
+      <peak xValue="20.9" yValue="0.85" />
+      <peak xValue="26.5" yValue="1.27" />
+      <peak xValue="22.9" yValue="1.63" />
+    </peakList>
+    <metadataList>
+      <metadata dictRef="jcampdx:dotOBSERVENUCLEUS" content="13C" />
+      <metadata dictRef="jcampdx:dotOBSERVENUCLEUS" content="1H" />
+    </metadataList>
+  </spectrum>
+  <spectrum type="HMBC">
+    <peakList>
+      <peak xValue="116.3" yValue="1.63" />
+      <peak xValue="144.5" yValue="2.19" />
+      <peak xValue="144.5" yValue="1.63" />
+      <peak xValue="47.4" yValue="2.06" />
+      <peak xValue="47.4" yValue="1.27" />
+      <peak xValue="47.4" yValue="1.63" />
+      <peak xValue="47.4" yValue="0.85" />
+      <peak xValue="41.1" yValue="1.27" />
+      <peak xValue="41.1" yValue="0.85" />
+      <peak xValue="38.1" yValue="2.19" />
+      <peak xValue="38.1" yValue="1.27" />
+      <peak xValue="38.1" yValue="0.85" />
+      <peak xValue="31.5" yValue="2.34" />
+      <peak xValue="31.5" yValue="1.16" />
+      <peak xValue="26.5" yValue="0.85" />
+    </peakList>
+    <metadataList>
+      <metadata dictRef="jcampdx:dotOBSERVENUCLEUS" content="13C" />
+      <metadata dictRef="jcampdx:dotOBSERVENUCLEUS" content="1H" />
+    </metadataList>
+  </spectrum>
+</cml>

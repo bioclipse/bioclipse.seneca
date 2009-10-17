@@ -10,7 +10,6 @@ package net.bioclipse.seneca.job;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.bioclipse.core.domain.ISpectrum;
 import net.bioclipse.core.util.LogUtils;
 import net.bioclipse.seneca.Activator;
 import net.bioclipse.seneca.anneal.AdaptiveAnnealingEngine;
@@ -31,12 +30,14 @@ import net.bioclipse.seneca.util.StructureGeneratorResult;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.structgen.SingleStructureRandomGenerator;
+import org.openscience.cdk.templates.MoleculeFactory;
+import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.FormatStringBuffer;
+import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 /**
  * @author Egon Willighagen
@@ -129,7 +130,10 @@ public class StochasticStructureElucidationJob implements StateListener,
             logger.debug( initialContainer.getBondCount() );
 
             ssrg.setAtomContainer( initialContainer );
-            IMolecule mol = ssrg.generate();
+            IMolecule mol = ssrg.generate();/*MoleculeFactory.makeAlphaPinene();
+            AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol);
+            CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(mol);*/
+            //
 
             logger.debug( "AtomCount: " + mol.getAtomCount() );
             logger.debug( "Starting structure generated" );

@@ -86,9 +86,9 @@ public class WCCNMRShiftDBJudge extends AbstractJudge implements IJudge {
 	public WCCNMRShiftDBJudge() throws IOException {
 		super("NMRShiftDB Judge (using the WCC)");
 		hasMaxScore = true;
-    elementSymbols = new ArrayList<String>();
-    elementSymbols.add( "C" );
-    predictor = new PredictionTool(elementSymbols);
+		elementSymbols = new ArrayList<String>();
+		elementSymbols.add( "C" );
+		predictor = new PredictionTool(elementSymbols);
 	}
 
 	public IJudge createJudge(IPath data)
@@ -189,10 +189,6 @@ public class WCCNMRShiftDBJudge extends AbstractJudge implements IJudge {
 		return new JudgeResult(maxScore, scoreorig, 0, message);
 	}
 
-	public boolean[][][] getAssignment() {
-		return null;
-	}
-
 
 	public void configure(CMLElement input) throws MissingInformationException {
 		if (!(input instanceof CMLCml)) {
@@ -223,34 +219,6 @@ public class WCCNMRShiftDBJudge extends AbstractJudge implements IJudge {
 			CMLPeak peak = peaks.get(peakNo);
 			carbonShifts[peakNo] = peak.getXValue();
 		}
-	}
-
-	private List<String> extractElements(String rawFormula) {
-		List<String> elementList = new ArrayList<String>();
-
-		if (rawFormula.length() == 0) {
-			return elementList;
-		}
-
-		String currentSymbol = null;
-		for (int f = 0; f < rawFormula.length(); f++) {
-			char currentChar = rawFormula.charAt(f);
-			if (currentChar >= 'A' && currentChar <= 'Z') {
-				currentSymbol = "" + currentChar;
-				if (f < rawFormula.length()) {
-					currentChar = rawFormula.charAt(f + 1);
-					if (currentChar >= 'a' && currentChar <= 'z') {
-						currentSymbol += currentChar;
-					}
-				}
-			} else {
-				currentSymbol = null;
-			}
-			if (!elementList.contains(currentSymbol)) {
-				elementList.add(currentSymbol);
-			}
-		}
-		return elementList;
 	}
 
     public String getDescription() {
@@ -389,4 +357,11 @@ public class WCCNMRShiftDBJudge extends AbstractJudge implements IJudge {
             }
         }
     }
+
+	public boolean isLabelling() {
+		return false;
+	}
+
+	public void labelStartStructure(IAtomContainer startStructure) {
+	}
 }

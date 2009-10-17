@@ -292,4 +292,11 @@ public class WCCHOSECodeDEPTJudge extends AbstractJudge implements IJudge {
         return null;
     }
 
+	public boolean isLabelling() {
+		return false;
+	}
+
+	public void labelStartStructure(IAtomContainer startStructure) {
+	}
+
 }
