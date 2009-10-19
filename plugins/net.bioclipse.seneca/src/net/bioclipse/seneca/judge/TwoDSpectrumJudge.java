@@ -183,15 +183,6 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 			}
 			List<IAtom> sphere = new ArrayList<IAtom>();
 			sphere.add(findAtom(cvalue.value1, ac));
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			MDLWriter writer = new MDLWriter(baos);
-			try {
-				writer.write(ac);
-			} catch (CDKException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.err.println(baos.toString());
 			plength = 
 				PathTools.breadthFirstTargetSearch(
 						ac, sphere, findAtom(cvalue.value2, ac), 0, cutOff);
