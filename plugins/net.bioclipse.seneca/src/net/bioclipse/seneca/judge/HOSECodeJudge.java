@@ -38,38 +38,17 @@ import org.xmlcml.cml.base.CMLElement;
  * state and hetero attachments
  */
 
-public class HOSECodeJudge extends AbstractJudge {
+public class HOSECodeJudge extends Abstract13CJudge {
 
 	public int score = 100; // Score for optimum fit of exp. with calc. shift
 	protected transient HOSECodeGenerator hcg;
 	protected transient BremserOneSphereHOSECodePredictor predictor;
-	protected double[] carbonShifts;
 
 	public HOSECodeJudge() {
-		super("HOSECodeJudge");
+		super("Simple HOSECodeJudge");
 		hasMaxScore = true;
-	}
-
-	public void setScore(int s) {
-		this.score = s;
-	}
-
-	public void init() {
 		hcg = new HOSECodeGenerator();
 		predictor = new BremserOneSphereHOSECodePredictor();
-		// predictor = new PredictionTool();
-	}
-
-	public void configure(CMLElement input) {
-		// TODO Auto-generated method stub
-	}
-
-	public IJudge createJudge(IPath data) throws MissingInformationException {
-		IJudge judge = new HOSECodeJudge();
-		//TODO use data
-		//judge.configure(input);
-		judge.setEnabled(true);
-		return judge;
 	}
 
 	public void calcMaxScore() {
@@ -128,33 +107,9 @@ public class HOSECodeJudge extends AbstractJudge {
 		return new JudgeResult(maxScore, scoreSum, 0, message);
 	}
 
-	public boolean[][][] getAssignment() {
-		return null;
-	}
-
     public String getDescription() {
-
-        // TODO Auto-generated method stub
-        return null;
+        return "Calculates a score based on a very simple 13C NMR prediction, using "+
+        "a simple score function. The WCCHOSECodeJudge and primarily NMRShiftDB judge will do much better";
     }
-
-    public boolean checkJudge( String data ) {
-
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    public IFile setData( ISelection selection, IFile sjsFile ) {
-
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-	public boolean isLabelling() {
-		return false;
-	}
-
-	public void labelStartStructure(IAtomContainer startStructure) {
-	}
 
 }

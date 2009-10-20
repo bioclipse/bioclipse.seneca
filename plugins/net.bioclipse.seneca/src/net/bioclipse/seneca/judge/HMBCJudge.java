@@ -39,12 +39,9 @@ import org.xmlcml.cml.element.CMLSpectrum;
 import spok.utils.SpectrumUtils;
 
 /**
- * Gets the AllPairsShortestPath matrix for a given structure and checks if all
- * of the HMBC rules are fullfilled. HMBC rules are given as a 3D matrix of size
- * [n][n][n] where n is the number of atoms in the structure. A value != 0 at
- * [x][y][y] indicates that there was a HMBC crosspeak between the signals of
- * heavyatom x and y. In the third dimension alternatives to y are noted to
- * handle ambigous assignments.
+ * Gets the score of a structure by an HMBC spectrum. The structure must be 
+ * labelled via labelStartStructure before with its 13C and HSQC shifts. The 
+ * data set with setData must contain all three types of spectra.
  */
 
 public class HMBCJudge extends TwoDSpectrumJudge {
@@ -55,7 +52,7 @@ public class HMBCJudge extends TwoDSpectrumJudge {
 	static final String H_SHIFT_2="H_SHIFT_2";
 	
 	public HMBCJudge() {
-		super("HMBCJudge");
+		super("HMBC Judge");
 		setScore(100, 0);
 		setScore(100, 1);
 		setScore(5, 2);

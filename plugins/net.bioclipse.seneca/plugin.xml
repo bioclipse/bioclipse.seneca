@@ -87,6 +87,10 @@
             class="net.bioclipse.seneca.judge.HMBCJudge"
             id="HMBCJudge"
             name="HMBCJudge"/>
+      <CASEJudge
+            class="net.bioclipse.seneca.judge.HOSECodeJudge"
+            id="HOSECodeJudge"
+            name="HOSECodeJudge"/>
    </extension>
    
    <extension point="org.eclipse.ui.perspectives">

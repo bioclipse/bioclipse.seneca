@@ -201,6 +201,8 @@ public class JudgePage extends FormPage implements IDirtyablePage {
 					judge.getClass().getName(), judge.getEnabled());
 			if(judge.getEnabled() && judge.getData()!=null)			    
 			    specification.setJudgeData( judge.getClass().getName(), judge.getData().toOSString() );
+			else
+				specification.setJudgeEnabled(judge.getClass().getName(),false);
 		}
 
 		this.setDirty(false);
