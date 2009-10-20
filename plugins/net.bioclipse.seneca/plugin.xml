@@ -26,9 +26,9 @@
          hasPages="true"
          icon="icons/molecule16.gif"
          id="net.bioclipse.plugins.wizards.NewSenecaJobResourceWizard"
-         name="New Seneca Job Specification">
+         name="Seneca Job">
          <description>
-            Create a new Seneca Job Specification.
+            Create a new Seneca Job.
          </description>
       </wizard>
    </extension>

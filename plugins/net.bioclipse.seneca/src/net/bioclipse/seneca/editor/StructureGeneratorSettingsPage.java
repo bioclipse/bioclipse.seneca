@@ -79,7 +79,7 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
   public static final String generatorNameDeteministic = "org.openscience.cdk.structgen.deterministic.GENMDeterministicGenerator";
 
 	public StructureGeneratorSettingsPage(FormEditor editor) {
-		super(editor, "structgen", "generator");
+		super(editor, "structgen", "Generators");
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {

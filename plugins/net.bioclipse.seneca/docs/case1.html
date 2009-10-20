@@ -7,47 +7,38 @@
 <body>
 <h1>CASE Basics</h1>
 <p>Computer-Aided Structure Elucidation is a method to find the constitutional structure
-of a molecule, starting from the bruto formula and NMR or MS spectra.</p>
-
-<h2>A CMLSpec file</h2>
-<p>CASE with SENECA starts with a CMLSpec file, for example this spectrum for a compound
-with the molecular formula C8H14O1:
-<pre>
-&lt;?xml version="1.0" encoding="UTF-8"?>
-&lt;spectrum format="NMR" xmlns="http://www.xml-cml.org/schema">
-  &lt;!-- C8H14O1 -->
-  &lt;peakList>
-    &lt;peak xValue="222.0" yValue="1.0"/>
-    &lt;peak xValue="47.5" yValue="1.0"/>
-    &lt;peak xValue="46.5" yValue="1.0"/>
-    &lt;peak xValue="45.8" yValue="1.0"/>
-    &lt;peak xValue="27.5" yValue="1.0"/>
-    &lt;peak xValue="24.3" yValue="2.0"/>
-    &lt;peak xValue="20.5" yValue="1.0"/>
-  &lt;/peakList>
-&lt;/spectrum>
-</pre>
-
-<h2>Selecting the deterministic generator</h2>
-<p>
-SENECA is able to run with two different structure generators; the first is the
+of a molecule, starting from the gross formula and NMR or MS spectra. The basic idea 
+is simple: Generate structures of that composition and test them against data 
+measured on the compound in question. The tricky bit is to do this effectivly and
+efficiently, i. e. so that you get the right structure in a reasonable time. The 
+sheer number of structure available for a typical formula makes this hard.</p>
+<p>In order to do a structure elucidation (we call this "setting up a SENECA 
+job"), you need to create a new 
+Seneca job specification. Go to File->New->Seneca->Seneca Job for that. You will 
+be asked for a name and a directory to create the job in. A new directory with 
+the chosen name will be created and a file called name.sjs in it, which is open 
+in a specialized editor. You need to add the required data to that file. The 
+editor shows you three tabs in that. They are:<p>
+<p><ul><li>General Data<br>
+Here you need to set the general information about the structure to elucidate. 
+This includes:
+<ul><li>A name: You can chose this as you like</li>
+<li>The gross formula: This must include hydrogens. You get this normally from mass spectrometry.</li>
+<li>The carbon hydrogen count: You tell here how many CHX groups exist. DEPT spectroscopie 
+gives you this information.</li>  
+<li>Do aromaticity detection during run: Checking this will take time, but it increases 
+the chance of hitting your structure in case it is aromatic.</li></ul>
+<li>Generators<br>
+Every run of SENECA needs a supply of candidate structure to test (the generating 
+part mentioned above). For this, you need 
+to choose one of the generators offered on this tab. These are:
+<ul><li>Deterministic generator: SENECA is able to run with two different structure generators; the first is the
 deterministic structure generator, which creates all possible constitutional
-isomers for the given molecular formula.</p>
-
-<p>CASE is started by opening the CMLSpec file, and clicking the blue 'compute'
-button in the menu bar, and selecting 'Other' with the black arrow right of it:<br />
-<img src="case1_1.png" width="400"/>
-</p>
-
-<p>The opened dialog allows you to select one of the two structure generators:<br />
-<img src="case1_2.png" width="400"/>
-</p>
-
-<p>When you select the deterministic generator, the wizard will ask you the
-molecular formula. It is important right now that you gave the atom count for
-each element, so C8H14O1 instead of C8H14O:<br />
-<img src="case1_3.png" width="400"/>
-</p>
-
+isomers for the given molecular formula.</li>
+<li></li>
+<li></li>
+<li></li></ul></li>
+<li>Scoring Functions<br>
+</li></ul>
 </body>
 </html>

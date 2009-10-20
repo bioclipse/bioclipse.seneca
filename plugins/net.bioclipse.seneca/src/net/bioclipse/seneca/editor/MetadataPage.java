@@ -35,7 +35,7 @@ public class MetadataPage extends FormPage implements IDirtyablePage {
 	private Button detectAromaticity;
 
 	public MetadataPage(FormEditor editor) {
-		super(editor, "metadata", "metadata");
+		super(editor, "metadata", "General Data");
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {

@@ -76,7 +76,7 @@ public class JudgePage extends FormPage implements IDirtyablePage {
 	private final Map<String,IJudge> judges = new HashMap<String,IJudge>();
 
 	public JudgePage(FormEditor editor) {
-		super(editor, "judges", "judges");
+		super(editor, "judges", "Scoring Functions");
 		this.senecaeditor = (SenecaJobEditor)editor;
 	}
 
