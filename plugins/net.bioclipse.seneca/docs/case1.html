@@ -18,7 +18,7 @@ Seneca job specification. Go to File->New->Seneca->Seneca Job for that. You will
 be asked for a name and a directory to create the job in. A new directory with 
 the chosen name will be created and a file called name.sjs in it, which is open 
 in a specialized editor. You need to add the required data to that file. The 
-editor shows you three tabs in that. They are:<p>
+editor shows you three tabs in that. They are:</p>
 <p><ul><li>General Data<br>
 Here you need to set the general information about the structure to elucidate. 
 This includes:
@@ -32,13 +32,39 @@ the chance of hitting your structure in case it is aromatic.</li></ul>
 Every run of SENECA needs a supply of candidate structure to test (the generating 
 part mentioned above). For this, you need 
 to choose one of the generators offered on this tab. These are:
-<ul><li>Deterministic generator: SENECA is able to run with two different structure generators; the first is the
+<ul><li>Deterministic Generator: SENECA is able to run with two different structure generators; the first is the
 deterministic structure generator, which creates all possible constitutional
-isomers for the given molecular formula.</li>
-<li></li>
-<li></li>
-<li></li></ul></li>
+isomers for the given molecular formula. This is slow, but is bound to find 
+the right structure.</li>
+<li>Simulated Annealing Generator: This generator generates only some structures 
+and is converging towards the best result. Much faster, but not guaranteeed to 
+find the best result.</li>
+<li>Simulated Annealing Generator (user configurable): Similar to the simulated 
+annealing generator, but you can set some parameters. This requires some knowledge 
+of the simulated annealing process.</li>
+<li>Genetic Algorithm Generator: This tries to find the best result by converging 
+towards it similar to simulated annealing, but using a different internal 
+process.</li></ul>
+<br>In general, you should try with the deterministic generator to see if it runs 
+in a reasonable time. If not, try the stochastic generators.</li>
 <li>Scoring Functions<br>
+When candidate structures are produced, we need to score how good they are. A 
+scoring function or a combination of scoring functions does this. In SENECA, 
+you can choose these:
+<ul><li>NMRShiftDB Scoring: This scores the structures according to a 13C spectrum. 
+The spectrum will be peak picked if it is a continuous one. You probably need 
+to check it still. Edit the generated file by opening it in the spectrum editor. 
+This scoring function works well, but with large structures it might be 
+lost with many structures, which are very similar.</li>
+<li>Simple HOSE Code Scoring and Simple HOSE Code Scoring (using WCC): These are 
+simpler versions of 13C scorings. The NMRShiftDB Scoring is to be prefered in 
+almost always.</li>
+<li>HMBC Soring: This does a scoring based on HSQC and HMBC spectra. Have a look 
+at the file 2d.cml in example2 of the SENECA examples to see how the file you 
+provide must look like. The file is no being processed.</li>
+</ul>
+<br>For all scorings, a configuration file needs to be supplied. You can drop it 
+onto the field saying "Drop file here".
 </li></ul>
 </body>
 </html>

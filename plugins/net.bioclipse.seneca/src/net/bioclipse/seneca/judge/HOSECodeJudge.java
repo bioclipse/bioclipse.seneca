@@ -45,7 +45,7 @@ public class HOSECodeJudge extends Abstract13CJudge {
 	protected transient BremserOneSphereHOSECodePredictor predictor;
 
 	public HOSECodeJudge() {
-		super("Simple HOSECodeJudge");
+		super("Simple HOSE Code Scoring");
 		hasMaxScore = true;
 		hcg = new HOSECodeGenerator();
 		predictor = new BremserOneSphereHOSECodePredictor();

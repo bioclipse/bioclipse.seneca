@@ -60,7 +60,7 @@ public class WCCNMRShiftDBJudge extends Abstract13CJudge implements IJudge {
 	private List<String> elementSymbols;
 
 	public WCCNMRShiftDBJudge() throws IOException {
-		super("NMRShiftDB Judge (using the WCC)");
+		super("NMRShiftDB Scoring (using the WCC)");
 		hasMaxScore = true;
 		elementSymbols = new ArrayList<String>();
 		elementSymbols.add( "C" );

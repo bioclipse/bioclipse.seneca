@@ -87,7 +87,7 @@ public class WCCHOSECodeJudge extends Abstract13CJudge implements IJudge {
 	protected double[] carbonShifts;
 
 	public WCCHOSECodeJudge() {
-		super("Simple HOSECodeJudge (using the WCC)");
+		super("Simple HOSE Code Scoring (using the WCC)");
 		hasMaxScore = true;
     hcg = new HOSECodeGenerator();
     predictor = new BremserOneSphereHOSECodePredictor();
