@@ -7,7 +7,9 @@
 <body>
 <h1>Developer Documentation</h1>
 <h2>Writing a Scoring Function</h2>
-<p>Scoring functions (also called judges) are contributed via the t.bioclipse.seneca.SenecaJudge 
+<p>As you have seen in the <a href="case1.html">introduction</a>, the scoring 
+functions are important for the outcome. Developers can contribute their own 
+via the net.bioclipse.seneca.SenecaJudge 
 extension. An example entry could look like this:</p>
 <pre>   
    <extension
@@ -21,8 +23,8 @@ extension. An example entry could look like this:</p>
 <p>The schema for the extension point can found <a href="../schema/SenecaJudge.exsd">here</a>. 
 The judge class must implement the net.bioclipse.seneca.judge.IJudge interface. 
 In most cases, the abstract class net.bioclipse.seneca.judge.Judge can be extended. The 
-class should then implement the empty constructor and the methods createJudge, evaluate, 
-getDescription, checkJudge and setData (see JavaDoc for explanation). The judge
+class should then implement the empty constructor and the methods createJudge, calcMaxScore, evaluate, 
+getDescription, checkJudge, isLabelling, labelStartStructure and setData (see JavaDoc for explanation). The judge
 should then show up in the editor and can be used.</p>
 <p>Important considerations:
 <ul>

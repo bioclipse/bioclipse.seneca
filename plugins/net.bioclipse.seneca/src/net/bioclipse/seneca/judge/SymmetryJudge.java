@@ -46,7 +46,6 @@ public class SymmetryJudge extends AbstractJudge implements Serializable, Clonea
 	public SymmetryJudge() {
 		super("SymmetryJudge");
 		symmetryClassesArrayList = new ArrayList();
-		score = 500;
 		hasMaxScore = true;
 	}
 
@@ -95,10 +94,6 @@ public class SymmetryJudge extends AbstractJudge implements Serializable, Clonea
 		return -1;
 	}
 
-	public void setScore(int s) {
-		score = s;
-	}
-
 	public void init() {
 		symmetryClasses = new SymmetryClass[symmetryClassesArrayList.size()];
 
@@ -139,6 +134,7 @@ public class SymmetryJudge extends AbstractJudge implements Serializable, Clonea
 		 * number.
 		 */
 
+		double score = 500;
 		for (int f = 0; f < symmetryClasses.length; f++) {
 			int hitCount = 0;
 			for (int g = 0; g < symmetryClasses[f].symmetricAtoms.length; g++) {

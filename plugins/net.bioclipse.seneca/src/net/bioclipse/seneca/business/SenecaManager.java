@@ -14,6 +14,7 @@ import net.bioclipse.seneca.Activator;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
 import net.bioclipse.seneca.editor.StructureGeneratorSettingsPage;
 import net.bioclipse.seneca.editor.TemperatureAndScoreListener;
+import net.bioclipse.seneca.job.DeterministicStructureElucidationJob;
 import net.bioclipse.seneca.job.GAStructureElucidationJob;
 import net.bioclipse.seneca.job.ICASEJob;
 import net.bioclipse.seneca.job.IScoreImprovedListener;
@@ -160,8 +161,8 @@ public class SenecaManager implements IBioclipseManager {
         } 
 	      else if (("org.openscience.cdk.structgen.deterministic." +
 	      		     "GENMDeterministicGenerator").equals(generatorID)) {
-  	        //job = new DeterministicStructureElucidationJob(jobSpec
-  	        //    .getJobTitle());
+  	        job = new DeterministicStructureElucidationJob(jobSpec
+  	            .getJobTitle());
 	      }else if(StructureGeneratorSettingsPage.
 	              gaGeneratorName.equals( generatorID )){
             job = new GAStructureElucidationJob( 

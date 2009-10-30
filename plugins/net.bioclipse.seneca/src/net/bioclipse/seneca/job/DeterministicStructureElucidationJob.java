@@ -5,25 +5,21 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors:
- *     Rob Schellhorn
  ******************************************************************************/
 
 package net.bioclipse.seneca.job;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import net.bioclipse.core.domain.ISpectrum;
-import net.bioclipse.seneca.anneal.TemperatureListener;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
 import net.bioclipse.seneca.editor.TemperatureAndScoreListener;
 import net.bioclipse.seneca.judge.ChiefJustice;
 import net.bioclipse.seneca.judge.IJudge;
 import net.bioclipse.seneca.judge.MissingInformationException;
-import net.bioclipse.seneca.judge.ScoreSummary;
 import net.bioclipse.seneca.util.StructureGeneratorResult;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,16 +27,15 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.Molecule;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.structgen.IStructureGenerationListener;
+import org.openscience.cdk.structgen.deterministic.GENMDeterministicGenerator;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.xmlcml.cml.base.CMLElement;
 
 public class DeterministicStructureElucidationJob 
 		implements IStructureGenerationListener, ICASEJob {
+
 
 	/**
 	 * The selection to run this computation on, never <code>null</code>.
@@ -49,9 +44,9 @@ public class DeterministicStructureElucidationJob
 
 	StructureGeneratorResult sgr = null;
 
-	private String molecularFormula;
-
-	// private GENMDeterministicGenerator gdg;
+	private SenecaJobSpecification            specification          = null;
+	
+	private GENMDeterministicGenerator gdg;
 
 	private long start;
 
@@ -61,8 +56,7 @@ public class DeterministicStructureElucidationJob
 
 	private CDKHydrogenAdder hydrogenAdder;
 
-	// private SimplePredictionTool predictor;
-
+	
 	private ChiefJustice chief = new ChiefJustice();
 
 	private int structureCount;
@@ -72,14 +66,16 @@ public class DeterministicStructureElucidationJob
 	private List<TemperatureAndScoreListener> temperatureListeners = new ArrayList<TemperatureAndScoreListener>();
 
     private boolean detectAromaticity;
+    private List<IScoreImprovedListener>      scoreImprovedListeners = new ArrayList<IScoreImprovedListener>();
+
 
   public void setDetectAromaticity(boolean detectAromaticity){
       this.detectAromaticity = detectAromaticity;
   }
   
 	public DeterministicStructureElucidationJob(String jobTitle) {
-		sgr = new StructureGeneratorResult(20);
 		this.jobTitle = jobTitle;
+		sgr = new StructureGeneratorResult(20);
 	}
 
 	public void configure(CMLElement input) throws MissingInformationException {
@@ -88,56 +84,34 @@ public class DeterministicStructureElucidationJob
 		// number of peaks or so...
 	}
 
-	public void predict(List list) {
-		ArrayList predSpect = new ArrayList();	// XXX : what is this for?
-		for (int i = 0; i < list.size(); i++) {
-			predSpect.clear();					// XXX : the only reference!
-			IAtomContainer ac = (IAtomContainer) list.get(i);
-			try {
-				hydrogenAdder.addImplicitHydrogens(ac);
-			} catch (CDKException e) {
-				e.printStackTrace();
-			}
-			ScoreSummary scoreSum = chief.getScore((IMolecule) ac);
-			double score = scoreSum.score; // scoreSum.maxScore;
-			ac.setProperty("SIMILARITY", new Float(score));
-		}
-	}
-
-	private Object[] sort(List list) {
-		Object[] molarray = list.toArray();
-		Arrays.sort(molarray, new SimCom());
-		return molarray;
-	}
-
-	public void stateChanged(List list) {
+	public void stateChanged(List<IMolecule> list) {
 		structureCount += list.size();
 		monitor.worked(1);
 		System.out.println(structureCount + "; ");
-		start = System.currentTimeMillis();
-		predict(list);
-		end = System.currentTimeMillis();
-		sort(list);
 		for (int f = 0; f < list.size(); f++) {
-			hitList.add((IMolecule) list.get(f));
+			list.get(f).setProperty("Score", chief.getScore(list.get(f)).score);
 		}
-		Object[] os = sort(hitList);
-		hitList.clear();
-		for (int f = 0; f < 20; f++)
-			hitList.add((Molecule) os[f]);
-	}
-
-	public class SimCom implements Comparator {
-		public int compare(Object o1, Object o2) {
-			Float sim1 = (Float) ((Molecule) o1).getProperty("SIMILARITY");
-			Float sim2 = (Float) ((Molecule) o2).getProperty("SIMILARITY");
-			if (sim1.floatValue() < sim2.floatValue())
-				return 1;
-			if (sim1.floatValue() > sim2.floatValue())
-				return -1;
-			return 0;
-		}
-
+		Collections.sort(list, new ScoreComparator());
+		org.openscience.cdk.interfaces.IMolecule current=list.get(0);
+		chief.getScore(current);
+		current.setProperty( "Score", (chief.calcMaxScore() - (Double)list.get(0).getProperty("Score"))/chief.calcMaxScore() );
+		current.setProperty( "Steps so far", structureCount );
+		current.setProperty( "Temperature", "n/a" );
+		sgr.structures.push( current );
+        this.monitor.subTask( "Best score: "
+                + current.getProperty("Score")
+                + ", s="
+                + (System.currentTimeMillis() - start)
+                / 1000 + ", #" + structureCount );
+        for ( int i = 0; i < scoreImprovedListeners.size(); i++ ) {
+            scoreImprovedListeners.get( i ).betterScore( current );
+        }					
+        for ( int i = 0; i < temperatureListeners.size(); i++ ) {
+            temperatureListeners.get( i ).change(0, (Double)current.getProperty("Score") );
+        }					
+        this.monitor.worked( structureCount );
+        //TODO if ( monitor.isCanceled() )
+        //	gdg.setCancelled( true );
 	}
 
 	/*
@@ -159,15 +133,15 @@ public class DeterministicStructureElucidationJob
 					DefaultChemObjectBuilder.getInstance());
 
 			// TODO : either remove this class, or create a new GENMDG
-			// gdg = new GENMDeterministicGenerator(molecularFormula,"");
-			// gdg.addListener(this);
-			// gdg.setStructuresAtATime(500);
-			// gdg.setReturnedStructureCount(1000000000000l);
+			gdg = new GENMDeterministicGenerator(specification.getMolecularFormula(),"/tmp/");
+			gdg.addListener(this);
+			gdg.setStructuresAtATime(500);
+			gdg.setReturnedStructureCount(1000000000000l);
 
 			// run structgen
 			System.out.println("Starting Structure Generation");
 			start = System.currentTimeMillis();
-			// gdg.generate();
+			gdg.generate();
 			end = System.currentTimeMillis();
 			// BioclipseConsole.writeToConsole("Computing time: " + (end -
 			// start) + " ms");
@@ -222,10 +196,6 @@ public class DeterministicStructureElucidationJob
 		return resources.toArray(new ISpectrum[resources.size()]);
 	}
 
-	public void setMolecularFormula(String formula) {
-		this.molecularFormula = formula;
-	}
-
 	public List<IJudge> getJudges() {
 		return chief.getJudges();
 	}
@@ -236,7 +206,7 @@ public class DeterministicStructureElucidationJob
 
     public void addScoreImprovedListener( IScoreImprovedListener listener ) {
 
-        // TODO Auto-generated method stub
+        scoreImprovedListeners.add(listener);
         
     }
     public void addTemperatureAndScoreListener( TemperatureAndScoreListener listener ) {
@@ -244,8 +214,19 @@ public class DeterministicStructureElucidationJob
     }
 
     public void setJobSpecification( SenecaJobSpecification specification ) {
-
-        // TODO Auto-generated method stub
-        
+    	this.specification = specification;
     }
+
+	public class ScoreComparator implements Comparator<IMolecule> {
+
+		public int compare(IMolecule o1, IMolecule o2) {
+			if((Double)o1.getProperty("Score")>(Double)o2.getProperty("Score"))
+				return -1;
+			else if((Double)o1.getProperty("Score")<(Double)o2.getProperty("Score"))
+				return 1;
+			else
+				return 0;
+		}
+
+	}
 }

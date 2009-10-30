@@ -49,7 +49,7 @@ public abstract class AbstractJudge implements IJudge {
 	boolean hasMaxScore = false;
 
 	boolean ringSetRequired = false;
-	double score, maxScore, scoreSum;
+	double maxScore, scoreSum;
 	String resultString;
 	transient JudgeListener judgeListener = null;
 

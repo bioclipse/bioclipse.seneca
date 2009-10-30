@@ -119,11 +119,14 @@ public class WCCNMRShiftDBJudge extends Abstract13CJudge implements IJudge {
 		double[] shiftsarray = new double[shifts.size()];
 		for(int i=0;i<shifts.size();i++)
 		    shiftsarray[i]=shifts.get( i );
-		double scoreorig=net.bioclipse.spectrum.Activator.getDefault()
+		if(shifts.contains(new Double(-1)) && shifts.size()==1)
+			scoreSum=0;
+		else
+			scoreSum=net.bioclipse.spectrum.Activator.getDefault()
 		    .getJavaSpectrumManager().calculateSimilarityWCC(
 		        this.carbonShifts, shiftsarray, 20.0);
 		String message = "Score: " + scoreSum + "/" + maxScore;
-		return new JudgeResult(maxScore, scoreorig, 0, message);
+		return new JudgeResult(maxScore, scoreSum, 0, message);
 	}
 
     public String getDescription() {
