@@ -4,4 +4,5 @@
       Seneca Update Site
    </description>
    <feature url="features/net.bioclipse.seneca_feature_0.0.1.B20090829.jar" id="net.bioclipse.seneca_feature" version="0.0.1.B20090829"/>
+   <feature url="features/net.bioclipse.seneca_feature_0.0.1.B20091030.jar" id="net.bioclipse.seneca_feature" version="0.0.1.B20091030"/>
 </site>

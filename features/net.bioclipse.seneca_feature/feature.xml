@@ -2,7 +2,7 @@
 <feature
       id="net.bioclipse.seneca_feature"
       label="Seneca_feature Feature"
-      version="0.0.1.B20090829"
+      version="0.0.1.B20091030"
       provider-name="The Bioclipse Team@EBI"
       plugin="net.bioclipse.seneca">
 
@@ -19,8 +19,8 @@
    </license>
 
    <requires>
-      <import feature="net.bioclipse.chemoinformatics_feature" version="2.1.0.v20090809"/>
-      <import feature="net.bioclipse.speclipse_feature" version="2.0.1.v20090821"/>
+      <import feature="net.bioclipse.chemoinformatics_feature" version="2.1.0.v20090807"/>
+      <import feature="net.bioclipse.speclipse_feature" version="2.0.1.v2001030"/>
    </requires>
 
    <plugin

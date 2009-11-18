@@ -140,7 +140,8 @@ public class SenecaJobEditor extends FormEditor implements IFinishListener, Temp
         if(valid){
             if(specification.getGenerator().equals( StructureGeneratorSettingsPage.generatorName )){
                 BestStructureView view = (BestStructureView)getSite().getPage().findView(BestStructureView.ID);
-                view.setMaxSteps(Integer.parseInt( 
+                if(view!=null)
+                	view.setMaxSteps(Integer.parseInt( 
                                  specification.getGeneratorSetting( 
                                      StructureGeneratorSettingsPage.generatorName, 
                                      "numberSteps")));
