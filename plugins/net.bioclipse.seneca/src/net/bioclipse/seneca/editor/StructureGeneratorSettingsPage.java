@@ -77,6 +77,7 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
   public static final String generatorNameUserConfigurable = "org.openscience.cdk.structgen.UserConfigurableRandomGenerator";
   public static final String gaGeneratorName = "org.openscience.seneca.job.GAStructureElucidationJob";
   public static final String generatorNameDeteministic = "org.openscience.cdk.structgen.deterministic.GENMDeterministicGenerator";
+  public static final String generatorNamePubchem = "org.openscience.cdk.structgen.PubchemDeterministicGenerator";
 
 	public StructureGeneratorSettingsPage(FormEditor editor) {
 		super(editor, "structgen", "Generators");
