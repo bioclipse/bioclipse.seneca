@@ -28,13 +28,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IMolecule;
-import org.openscience.cdk.structgen.IStructureGenerationListener;
-import org.openscience.cdk.structgen.deterministic.GENMDeterministicGenerator;
+import org.openscience.cdk.structgen.pubchem.PubchemStructureGenerator;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.xmlcml.cml.base.CMLElement;
 
-public class DeterministicStructureElucidationJob 
-		implements IStructureGenerationListener, ICASEJob {
+public class PubchemStructureElucidationJob 
+		implements ICASEJob {
 
 
 	/**
@@ -46,17 +45,12 @@ public class DeterministicStructureElucidationJob
 
 	private SenecaJobSpecification            specification          = null;
 	
-	private GENMDeterministicGenerator gdg;
-
 	private long start;
 
 	private long end;
 
 	private List<IMolecule> hitList;
 
-	private CDKHydrogenAdder hydrogenAdder;
-
-	
 	private ChiefJustice chief = new ChiefJustice();
 
 	private int structureCount;
@@ -73,7 +67,7 @@ public class DeterministicStructureElucidationJob
       this.detectAromaticity = detectAromaticity;
   }
   
-	public DeterministicStructureElucidationJob(String jobTitle) {
+	public PubchemStructureElucidationJob(String jobTitle) {
 		this.jobTitle = jobTitle;
 		sgr = new StructureGeneratorResult(20);
 	}
@@ -94,7 +88,7 @@ public class DeterministicStructureElucidationJob
 		Collections.sort(list, new ScoreComparator());
 		org.openscience.cdk.interfaces.IMolecule current=list.get(0);
 		chief.getScore(current);
-		current.setProperty( "Score", (Double)list.get(0).getProperty("Score") );
+		current.setProperty( "Score", (Double)list.get(0).getProperty("Score"));
 		current.setProperty( "Steps so far", structureCount );
 		current.setProperty( "Temperature", "n/a" );
 		sgr.structures.push( current );
@@ -128,37 +122,12 @@ public class DeterministicStructureElucidationJob
 		try {
 			monitor.beginTask("Computing", 50);
 			hitList = new ArrayList<IMolecule>();
-
-			hydrogenAdder = CDKHydrogenAdder.getInstance(
-					DefaultChemObjectBuilder.getInstance());
-
-			// TODO : either remove this class, or create a new GENMDG
-			gdg = new GENMDeterministicGenerator(specification.getMolecularFormula(),"/tmp/");
-			gdg.addListener(this);
-			gdg.setStructuresAtATime(500);
-			gdg.setReturnedStructureCount(1000000000000l);
-
 			// run structgen
 			System.out.println("Starting Structure Generation");
 			start = System.currentTimeMillis();
-			gdg.generate();
+			List<IMolecule> result=PubchemStructureGenerator.doDownload(specification.getMolecularFormula());
 			end = System.currentTimeMillis();
-			// BioclipseConsole.writeToConsole("Computing time: " + (end -
-			// start) + " ms");
-			// int isomerCount = gdg.getNumberOfStructures();
-			// BioclipseConsole.writeToConsole("Generated structures: " +
-			// isomerCount);
-
-//			int counter = 1;
-			for (int i = 0; i < Math.min(hitList.size(), 10); i++) {
-				// createChildResourceInSenecaFolder(
-				// counter, (IMolecule)hitList.get(i),
-				// jobTitle
-				// );
-				// counter++;
-			}
-
-			// BioclipseConsole.writeToConsole(selection.toString());
+			this.stateChanged(result);
 
 		} catch (Exception exception) {
 			System.out.println("An exception occured: "

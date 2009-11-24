@@ -30,14 +30,10 @@ import net.bioclipse.seneca.util.StructureGeneratorResult;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.structgen.SingleStructureRandomGenerator;
-import org.openscience.cdk.templates.MoleculeFactory;
-import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.FormatStringBuffer;
-import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 /**
  * @author Egon Willighagen

@@ -118,6 +118,7 @@ public abstract class Abstract13CJudge extends AbstractJudge {
                 configure(cmlcml);
             }            
         } catch (Exception e) {
+        	e.printStackTrace();
             return false;
         }
         return true;

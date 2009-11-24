@@ -18,6 +18,7 @@ import net.bioclipse.seneca.job.DeterministicStructureElucidationJob;
 import net.bioclipse.seneca.job.GAStructureElucidationJob;
 import net.bioclipse.seneca.job.ICASEJob;
 import net.bioclipse.seneca.job.IScoreImprovedListener;
+import net.bioclipse.seneca.job.PubchemStructureElucidationJob;
 import net.bioclipse.seneca.job.StochasticStructureElucidationJob;
 import net.bioclipse.seneca.job.UserConfigurableStochasticStructureElucidationJob;
 import net.bioclipse.seneca.judge.IJudge;
@@ -154,21 +155,22 @@ public class SenecaManager implements IBioclipseManager {
   	                      jobSpec.getGeneratorSetting( 
   	                          StructureGeneratorSettingsPage.generatorName, 
   	                          "numberSteps")));
-	      } else if (StructureGeneratorSettingsPage.generatorNameUserConfigurable
+        } else if (StructureGeneratorSettingsPage.generatorNameUserConfigurable
                 .equals(generatorID)) {
             job = new UserConfigurableStochasticStructureElucidationJob( 
                       startStructure);
-        } 
-	      else if (("org.openscience.cdk.structgen.deterministic." +
-	      		     "GENMDeterministicGenerator").equals(generatorID)) {
+        } else if (StructureGeneratorSettingsPage.generatorNameDeteministic.equals(generatorID)) {
   	        job = new DeterministicStructureElucidationJob(jobSpec
   	            .getJobTitle());
-	      }else if(StructureGeneratorSettingsPage.
+        }else if(StructureGeneratorSettingsPage.
 	              gaGeneratorName.equals( generatorID )){
             job = new GAStructureElucidationJob( 
                       jobSpec.getJobTitle(),  
                       startStructure);
-	      } else {
+        } else if (StructureGeneratorSettingsPage.generatorNamePubchem.equals(generatorID)) {
+  	        job = new PubchemStructureElucidationJob(jobSpec
+  	            .getJobTitle());
+	    } else {
 	          throw new BioclipseException("The generator type '" + generatorID
 	                                       + "' is not recognized.");
 	      }
@@ -277,6 +279,8 @@ public class SenecaManager implements IBioclipseManager {
             !StructureGeneratorSettingsPage.generatorNameUserConfigurable
             .equals(generatorID) &&  
             !StructureGeneratorSettingsPage.generatorNameDeteministic
+            .equals(generatorID) &&
+            !StructureGeneratorSettingsPage.generatorNamePubchem
             .equals(generatorID)) 
             return false;
         else

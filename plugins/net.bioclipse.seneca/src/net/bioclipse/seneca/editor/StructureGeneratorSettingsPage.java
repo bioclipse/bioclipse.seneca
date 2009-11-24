@@ -39,6 +39,10 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
 
 	public boolean isDirty = false;
 
+	// items for the pubchem generator
+	private Text classNamePubchem;
+	private Button enabledPubchem;
+
 	// items for the deterministic generator
 	private Text classNameDeter;
 	private Button enabledDeter;
@@ -98,7 +102,7 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
 
 		// no extension point for the two structure generators
 
-		// The deterministic generator
+		// The pubchem generator
 		Section section = toolkit.createSection(form.getBody(),
 			Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE |
 			Section.EXPANDED
@@ -111,8 +115,33 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
 				form.reflow(true);
 			}
 		});
-		section.setText("Deterministic Generator");
+		section.setText("PubChem Generator");
 		Composite sectionClient = toolkit.createComposite(section);
+		sectionClient.setLayout(new GridLayout());
+		toolkit.createLabel(sectionClient, "Java Class:");
+		this.classNamePubchem = toolkit.createText(sectionClient, generatorNamePubchem);
+		this.classNamePubchem.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.classNamePubchem.setEditable(false);
+		this.enabledPubchem = toolkit.createButton(sectionClient, "Enable", SWT.CHECK);
+		this.enabledPubchem.addSelectionListener(new EnableGeneratorListener());
+		this.enabledPubchem.setSelection(specification.getGeneratorEnabled(generatorNamePubchem));
+		section.setClient(sectionClient);
+
+		// The deterministic generator
+		section = toolkit.createSection(form.getBody(),
+			Section.DESCRIPTION | Section.TITLE_BAR | Section.TWISTIE |
+			Section.EXPANDED
+		);
+		td = new TableWrapData(TableWrapData.FILL);
+		td.colspan = 2;
+		section.setLayoutData(td);
+		section.addExpansionListener(new ExpansionAdapter() {
+			public void expansionStateChanged(ExpansionEvent e) {
+				form.reflow(true);
+			}
+		});
+		section.setText("Deterministic Generator");
+		sectionClient = toolkit.createComposite(section);
 		sectionClient.setLayout(new GridLayout());
 		toolkit.createLabel(sectionClient, "Java Class:");
 		this.classNameDeter = toolkit.createText(sectionClient, generatorNameDeteministic);
@@ -376,21 +405,22 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
 
 		//only if page has been shown, ui is acutally built
 		if(classNameDeter!=null){
+		    specification.setGeneratorEnabled(classNamePubchem.getText(), enabledPubchem.getSelection());
+
 		    specification.setGeneratorEnabled(classNameDeter.getText(), enabledDeter.getSelection());
-				specification.setGeneratorEnabled(classNameStoch.getText(), enabledStoch.getSelection());
-
+		    
+		    specification.setGeneratorEnabled(classNameStoch.getText(), enabledStoch.getSelection());
     		specification.setGeneratorSetting(generatorName, "numberSteps", numberOfSteps.getText());
+    		specification.setGeneratorEnabled(classNameStochUserSettings.getText(), enabledStochUserSettings.getSelection());
 
-        specification.setGeneratorEnabled(classNameStochUserSettings.getText(), enabledStochUserSettings.getSelection());
-
-        specification.setGeneratorSetting(generatorNameUserConfigurable, "acceptanceProbability", acceptanceProb.getText());
-        specification.setGeneratorSetting(generatorNameUserConfigurable, "coolingRate", coolingRate.getText());
-        specification.setGeneratorSetting(generatorNameUserConfigurable, "initializationCycles", initCycles.getText());
-        specification.setGeneratorSetting(generatorNameUserConfigurable, "convergenceStopCount", convergenceStopCount.getText());
-        specification.setGeneratorSetting(generatorNameUserConfigurable, "maxPlateauSteps", maxPlateauSteps.getText());
-        specification.setGeneratorSetting(generatorNameUserConfigurable, "maxUphillSteps", maxUphillSteps.getText());
+	        specification.setGeneratorSetting(generatorNameUserConfigurable, "acceptanceProbability", acceptanceProb.getText());
+	        specification.setGeneratorSetting(generatorNameUserConfigurable, "coolingRate", coolingRate.getText());
+	        specification.setGeneratorSetting(generatorNameUserConfigurable, "initializationCycles", initCycles.getText());
+	        specification.setGeneratorSetting(generatorNameUserConfigurable, "convergenceStopCount", convergenceStopCount.getText());
+	        specification.setGeneratorSetting(generatorNameUserConfigurable, "maxPlateauSteps", maxPlateauSteps.getText());
+	        specification.setGeneratorSetting(generatorNameUserConfigurable, "maxUphillSteps", maxUphillSteps.getText());
         
-        specification.setGeneratorEnabled( classNameGA.getText(), enabledGA.getSelection() );
+	        specification.setGeneratorEnabled( classNameGA.getText(), enabledGA.getSelection() );
 		}
 
 		this.setDirty(false);
@@ -407,22 +437,31 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
 		public void widgetSelected(SelectionEvent e) {
 			// make sure only one generator is enabled!
 			if (e.getSource() == enabledStoch) {
+				enabledPubchem.setSelection(!enabledPubchem.getSelection());
 				enabledDeter.setSelection(!enabledStoch.getSelection());
 				enabledStochUserSettings.setSelection(!enabledStoch.getSelection());
 				enabledGA.setSelection(!enabledStoch.getSelection());
 			} else if (e.getSource() == enabledDeter) {
+				enabledPubchem.setSelection(!enabledPubchem.getSelection());
 				enabledStoch.setSelection(!enabledDeter.getSelection());
-        enabledStochUserSettings.setSelection(!enabledDeter.getSelection());
-        enabledGA.setSelection(!enabledDeter.getSelection());
+				enabledStochUserSettings.setSelection(!enabledDeter.getSelection());
+				enabledGA.setSelection(!enabledDeter.getSelection());
 			} else if (e.getSource() == enabledStochUserSettings) {
+				enabledPubchem.setSelection(!enabledPubchem.getSelection());
 				enabledStoch.setSelection(!enabledStochUserSettings.getSelection());
-        enabledDeter.setSelection(!enabledStochUserSettings.getSelection());
-        enabledGA.setSelection(!enabledStochUserSettings.getSelection());
+				enabledDeter.setSelection(!enabledStochUserSettings.getSelection());
+				enabledGA.setSelection(!enabledStochUserSettings.getSelection());
 			} else if (e.getSource() == enabledGA) {
-	        enabledStoch.setSelection(!enabledGA.getSelection());
-	        enabledStochUserSettings.setSelection(!enabledGA.getSelection());
-	        enabledDeter.setSelection(!enabledGA.getSelection());
-	    }
+				enabledPubchem.setSelection(!enabledGA.getSelection());
+		        enabledStoch.setSelection(!enabledGA.getSelection());
+		        enabledStochUserSettings.setSelection(!enabledGA.getSelection());
+		        enabledDeter.setSelection(!enabledGA.getSelection());
+			} else if (e.getSource() == enabledPubchem) {
+		        enabledStoch.setSelection(!enabledPubchem.getSelection());
+		        enabledStochUserSettings.setSelection(!enabledPubchem.getSelection());
+		        enabledDeter.setSelection(!enabledPubchem.getSelection());
+				enabledGA.setSelection(!enabledPubchem.getSelection());
+		    }
 			setDirty(true);
 		}
 	}

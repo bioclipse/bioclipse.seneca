@@ -1,7 +1,6 @@
 package org.openscience.cdk.structgen.pubchem;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -16,8 +15,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -40,62 +37,17 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
-<h2>Submit complex queries to the Power User Gateway.</h2>
-
-<h3>how ?</h3>
- * <ol>
- * <li>creating a request
- * <li>receiving an PCT-Waiting_reqid
- * <li>check the {@link #responseDocument} for the requiered download {@link URL}  
- * <li>{@link #refresh()} the request until the response contains a download {@link URL}
- * <li>{@link #store(URL, File)} the result in a local file.
- * </ol>
-
-
-<h3>Code</h3>
-The simple way to use the this class:<p>
-<code>
-int[] pctIDs = new int[]{1,2,3,4};<br>
-{@link PowerUserGatewayRequest} request = new {@link PowerUserGatewayRequest}(pctIDs);<br>
-<b>request.submitInitalRequest();</b><br>
-<br>
-while(!request.getStatus().isFinished()){<br>
-&nbsp;&nbsp;&nbsp;System.out.println("waiting for " + request.getRequestID());
-&nbsp;&nbsp;&nbsp;request.refresh();<br>
-}
-<br>
-// download it to your directory<br>
-{@link PowerUserGatewayRequest}.store(request.getResponseURL(), targetFile);<br>
-<br><br>
-</code>
-
-
-<h2>Update:  Java 1.4 & Java5</h2>
- added support for java 1.4 and java 5:<br>
- {@link #xpath(String, Document)} method is now redirecting to {@link #xpathJDK1_4(String, Document)} or {@link #xpathJDK5(String, Document)}.<br>
- Seperation was needed to support java5 without additional libraries.<br>
-
- <b>In case you are running it on java1.4 </b> you need to import <code>org.apache.xpath.XPathAPI</code> and modify the mehtod {@link #xpath(String, Document)}:
- <br><br>
- <code>
-public static Node <b>xpath(String pathString, final Document doc)</b> throws Exception {<br>
-</code><b>depending on your JDK use one of the methods.<code>
-<font color="red"><br>
-<i>&nbsp;&nbsp;//Node node = xpathJDK1_4(pathString, doc);</i><br>
-&nbsp;&nbsp;Node node = xpathJDK5(pathString, doc);<br> 
-</font>
-&nbsp;&nbsp;return node;<br>
-}
-</code>
-<p>
-
-<hr>
-<a rel="license" href="http://creativecommons.org/licenses/by/3.0/us/">
-<img alt="Creative Commons License" style="border-width:0" src="http://creativecommons.org/images/public/somerights20.png" />
-</a>
-<br />This work is licensed under a 
-<a rel="license" href="http://creativecommons.org/licenses/by/3.0/us/">Creative Commons Attribution 3.0 United States License</a>.
-<hr>
+ * Retrieves all structures from pubchem for a formula.
+ * Usage: List<IMolecule> result = PubchemStructureGenerator.doDownload("C10H16");
+ * 
+ * This class has been adapted from the PowerUserGatewayRequest by Martin Scholz.
+ * 
+ *	<a rel="license" href="http://creativecommons.org/licenses/by/3.0/us/">
+ *	<img alt="Creative Commons License" style="border-width:0" src="http://creativecommons.org/images/public/somerights20.png" />
+ *	</a>
+ *	<br />This work is licensed under a 
+ *	<a rel="license" href="http://creativecommons.org/licenses/by/3.0/us/">Creative Commons Attribution 3.0 United States License</a>.
+ *	<hr>
  *
  * @see http://pubchem.ncbi.nlm.nih.gov/ 
  * @see http://depth-first.com/articles/2007/06/04/hacking-pubchem-power-user-gateway
@@ -105,7 +57,7 @@ public static Node <b>xpath(String pathString, final Document doc)</b> throws Ex
  * @version $Revision: 1.21 $
  *
  */
-public class PowerUserGatewayRequest {
+public class PubchemStructureGenerator {
     public static final String COMPRESSION_NONE = "none";
     public static final String COMPRESSION_GZIP = "gzip";
     public static final String COMPRESSION_BZIP2 = "bzip2";
@@ -125,13 +77,9 @@ public class PowerUserGatewayRequest {
     
     private String webenv = null;
 
-
-    public static void main(String[] args) throws TransformerConfigurationException, ParserConfigurationException, IOException, SAXException, FactoryConfigurationError, TransformerFactoryConfigurationError, TransformerException, NodeNotAvailableException{
-    	System.err.println(PowerUserGatewayRequest.doDownload("C10H16").size());
-    }
     
     public static List<IMolecule> doDownload(String formula) throws TransformerConfigurationException, ParserConfigurationException, IOException, SAXException, FactoryConfigurationError, TransformerFactoryConfigurationError, TransformerException, NodeNotAvailableException{
-        PowerUserGatewayRequest request = new PowerUserGatewayRequest();
+        PubchemStructureGenerator request = new PubchemStructureGenerator();
         request.submitInitalRequest(formula);
 
         while(!request.getStatus().isFinished()){
@@ -175,7 +123,7 @@ public class PowerUserGatewayRequest {
      * creata a new instance of the request. <pre>The request is <b>not</b> sent.
      * @param pctIDs the pubchem IDs 
      */
-    public PowerUserGatewayRequest () {
+    public PubchemStructureGenerator () {
         debug("creating request");
     }
 
