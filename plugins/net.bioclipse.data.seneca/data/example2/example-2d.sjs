@@ -6,4 +6,4 @@
   
 <judge id="net.bioclipse.seneca.judge.HMBCJudge" enabled="true" data="2d.cml">
 </judge>
-<mf>C10H16</mf><title>Example</title><detectAromaticity>false</detectAromaticity><generator id="org.openscience.cdk.structgen.UserConfigurableRandomGenerator" enabled="false"><acceptanceProbability value="0.8" /><coolingRate value="0.95" /><initializationCycles value="200" /><convergenceStopCount value="4500" /><maxPlateauSteps value="1500" /><maxUphillSteps value="150" /></generator></senecaJob>
+<generator id="org.openscience.cdk.structgen.UserConfigurableRandomGenerator" enabled="false"><acceptanceProbability value="0.8" /><coolingRate value="0.95" /><initializationCycles value="200" /><convergenceStopCount value="4500" /><maxPlateauSteps value="1500" /><maxUphillSteps value="150" /></generator><judge id="net.bioclipse.seneca.judge.WCCNMRShiftDBJudge" enabled="true" data="c13.cml" /><mf>C10H16</mf><title>Example</title><detectAromaticity>false</detectAromaticity></senecaJob>

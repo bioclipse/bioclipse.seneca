@@ -9,12 +9,15 @@
 
 package net.bioclipse.seneca.job;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import net.bioclipse.core.domain.ISpectrum;
+import net.bioclipse.core.util.LogUtils;
+import net.bioclipse.seneca.Activator;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
 import net.bioclipse.seneca.editor.TemperatureAndScoreListener;
 import net.bioclipse.seneca.judge.ChiefJustice;
@@ -22,14 +25,13 @@ import net.bioclipse.seneca.judge.IJudge;
 import net.bioclipse.seneca.judge.MissingInformationException;
 import net.bioclipse.seneca.util.StructureGeneratorResult;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.structgen.pubchem.PubchemStructureGenerator;
-import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.xmlcml.cml.base.CMLElement;
 
 public class PubchemStructureElucidationJob 
@@ -61,7 +63,7 @@ public class PubchemStructureElucidationJob
 
     private boolean detectAromaticity;
     private List<IScoreImprovedListener>      scoreImprovedListeners = new ArrayList<IScoreImprovedListener>();
-
+    private static final Logger logger = Logger.getLogger(PubchemStructureElucidationJob.class);
 
   public void setDetectAromaticity(boolean detectAromaticity){
       this.detectAromaticity = detectAromaticity;
@@ -125,9 +127,13 @@ public class PubchemStructureElucidationJob
 			// run structgen
 			System.out.println("Starting Structure Generation");
 			start = System.currentTimeMillis();
-			List<IMolecule> result=PubchemStructureGenerator.doDownload(specification.getMolecularFormula());
-			end = System.currentTimeMillis();
-			this.stateChanged(result);
+			try{
+				List<IMolecule> result=PubchemStructureGenerator.doDownload(specification.getMolecularFormula());
+				end = System.currentTimeMillis();
+				this.stateChanged(result);
+			}catch(IOException ex){
+				LogUtils.handleException(ex, logger, Activator.PLUGIN_ID);
+			}
 
 		} catch (Exception exception) {
 			System.out.println("An exception occured: "
