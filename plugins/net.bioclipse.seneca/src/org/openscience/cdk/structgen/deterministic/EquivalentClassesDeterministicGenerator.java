@@ -25,7 +25,8 @@ import java.util.List;
 
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.tools.LoggingTool;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * An implementation of Faulons equivalent classes deterministic generator.
@@ -36,7 +37,7 @@ import org.openscience.cdk.tools.LoggingTool;
  */
 public class EquivalentClassesDeterministicGenerator {
 	
-	LoggingTool logger = new LoggingTool(EquivalentClassesDeterministicGenerator.class);
+	ILoggingTool logger = LoggingToolFactory.createLoggingTool(EquivalentClassesDeterministicGenerator.class);
 	
 	/* The initial, unbonded AtomContainer
 	 * From this we construct a number of AtomContainers that contain the 

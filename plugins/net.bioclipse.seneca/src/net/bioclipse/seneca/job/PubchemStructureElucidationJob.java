@@ -64,6 +64,7 @@ public class PubchemStructureElucidationJob
     private boolean detectAromaticity;
     private List<IScoreImprovedListener>      scoreImprovedListeners = new ArrayList<IScoreImprovedListener>();
     private static final Logger logger = Logger.getLogger(PubchemStructureElucidationJob.class);
+    private double bestScoreSoFar=0;
 
   public void setDetectAromaticity(boolean detectAromaticity){
       this.detectAromaticity = detectAromaticity;
@@ -80,34 +81,33 @@ public class PubchemStructureElucidationJob
 		// number of peaks or so...
 	}
 
-	public void stateChanged(List<IMolecule> list) {
-		structureCount += list.size();
-		monitor.worked(1);
-		System.out.println(structureCount + "; ");
-		for (int f = 0; f < list.size(); f++) {
-			list.get(f).setProperty("Score", chief.getScore(list.get(f)).score);
+	public boolean stateChanged(IMolecule molecule) {
+		structureCount += 1;
+		monitor.worked(structureCount);
+		System.out.print(structureCount + "; ");
+		molecule.setProperty("Score", chief.getScore(molecule).score);
+		molecule.setProperty( "Steps so far", structureCount );
+		molecule.setProperty( "Temperature", "n/a" );
+		if((Double)molecule.getProperty("Score")>=bestScoreSoFar){
+			bestScoreSoFar=(Double)molecule.getProperty("Score");
+			sgr.structures.push( molecule );
+	        this.monitor.subTask( "Best score: "
+	                + molecule.getProperty("Score")
+	                + ", s="
+	                + (System.currentTimeMillis() - start)
+	                / 1000 + ", #" + structureCount );
+	        for ( int i = 0; i < scoreImprovedListeners.size(); i++ ) {
+	            scoreImprovedListeners.get( i ).betterScore( molecule );
+	        }					
+	        for ( int i = 0; i < temperatureListeners.size(); i++ ) {
+	            temperatureListeners.get( i ).change(0, (Double)molecule.getProperty("Score") );
+	        }	
 		}
-		Collections.sort(list, new ScoreComparator());
-		org.openscience.cdk.interfaces.IMolecule current=list.get(0);
-		chief.getScore(current);
-		current.setProperty( "Score", (Double)list.get(0).getProperty("Score"));
-		current.setProperty( "Steps so far", structureCount );
-		current.setProperty( "Temperature", "n/a" );
-		sgr.structures.push( current );
-        this.monitor.subTask( "Best score: "
-                + current.getProperty("Score")
-                + ", s="
-                + (System.currentTimeMillis() - start)
-                / 1000 + ", #" + structureCount );
-        for ( int i = 0; i < scoreImprovedListeners.size(); i++ ) {
-            scoreImprovedListeners.get( i ).betterScore( current );
-        }					
-        for ( int i = 0; i < temperatureListeners.size(); i++ ) {
-            temperatureListeners.get( i ).change(0, (Double)current.getProperty("Score") );
-        }					
         this.monitor.worked( structureCount );
-        //TODO if ( monitor.isCanceled() )
-        //	gdg.setCancelled( true );
+        if ( monitor.isCanceled() )
+        	return true;
+        else
+        	return false;
 	}
 
 	/*
@@ -130,7 +130,10 @@ public class PubchemStructureElucidationJob
 			try{
 				List<IMolecule> result=PubchemStructureGenerator.doDownload(specification.getMolecularFormula());
 				end = System.currentTimeMillis();
-				this.stateChanged(result);
+				for(int i=0;i<result.size();i++){
+					if(stateChanged(result.get(i)))
+						break;
+				}
 			}catch(IOException ex){
 				LogUtils.handleException(ex, logger, Activator.PLUGIN_ID);
 			}

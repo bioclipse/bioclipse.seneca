@@ -28,7 +28,8 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
-import org.openscience.cdk.tools.LoggingTool;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.SaturationChecker;
 import org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator;
 import org.openscience.cdk.tools.manipulator.BondManipulator;
@@ -47,7 +48,7 @@ import org.openscience.cdk.tools.manipulator.BondManipulator;
  */
 public class PartialFilledStructureMerger {
 	
-	private LoggingTool logger = new LoggingTool(PartialFilledStructureMerger.class);
+	private ILoggingTool logger = LoggingToolFactory.createLoggingTool(PartialFilledStructureMerger.class);
 	
 	SaturationChecker satCheck;
 

@@ -25,7 +25,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openscience.cdk.Molecule;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
@@ -33,10 +32,9 @@ import org.openscience.cdk.interfaces.IMolecularFormula;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.interfaces.IBond.Order;
 import org.openscience.cdk.nonotify.NoNotificationChemObjectBuilder;
-import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.structgen.IStructureGenerationListener;
-import org.openscience.cdk.tools.LoggingTool;
-import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator;
 
 
@@ -82,7 +80,7 @@ import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator;
  */
 public class GENMDeterministicGenerator {
 
-	private LoggingTool logger;
+	private ILoggingTool logger;
 
 	private int numberOfSetFragment;
 	private int numberOfStructures;
@@ -113,7 +111,7 @@ public class GENMDeterministicGenerator {
 	 */
 	public GENMDeterministicGenerator(String mf, String path) throws Exception
 	{
-		logger = new LoggingTool(GENMDeterministicGenerator.class);
+		logger = LoggingToolFactory.createLoggingTool(GENMDeterministicGenerator.class);
 		builder = NoNotificationChemObjectBuilder.getInstance();
 
 		numberOfSetFragment=0;
