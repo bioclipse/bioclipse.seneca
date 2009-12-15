@@ -163,4 +163,12 @@ public class ChiefJustice {
 	public void removeJudge(IJudge judge) {
 		this.judges.remove(judge);
 	}
+
+	public void label(IMolecule arg0) {
+		for(int i=0;i<judges.size();i++){
+            if(judges.get(i).isLabelling()){
+            	judges.get(i).labelStartStructure(arg0);
+			}
+		}
+	}
 }

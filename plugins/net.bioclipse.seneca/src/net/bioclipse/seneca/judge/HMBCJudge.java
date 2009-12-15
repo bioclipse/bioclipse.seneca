@@ -203,6 +203,9 @@ public class HMBCJudge extends TwoDSpectrumJudge {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see net.bioclipse.seneca.judge.labellingJudge#labelStartStructure(org.openscience.cdk.interfaces.IAtomContainer)
+	 */
 	public void labelStartStructure(IAtomContainer startStructure) {
 		//using the bb+hsqc spectrum, we assign c and h labels.
 		Elements spectra = cmlcml.getChildCMLElements("spectrum");

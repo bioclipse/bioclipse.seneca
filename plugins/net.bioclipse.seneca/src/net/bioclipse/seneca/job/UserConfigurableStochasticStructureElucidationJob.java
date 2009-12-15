@@ -17,6 +17,7 @@ import java.util.List;
 
 import net.bioclipse.core.domain.ISpectrum;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
+import net.bioclipse.seneca.editor.StructureGeneratorSettingsPage;
 import net.bioclipse.seneca.editor.TemperatureAndScoreListener;
 import net.bioclipse.seneca.judge.ChiefJustice;
 import net.bioclipse.seneca.judge.IJudge;
@@ -117,9 +118,14 @@ public class UserConfigurableStochasticStructureElucidationJob implements ICASEJ
       richMonitor.subTask("Initializing annealing engine...");
 
       annealingEngine.initAnnealing(randomGent, chiefJustice, monitor);
-      annealingEngine.setMaxPlateauSteps(300);
-      annealingEngine.setConvergenceStopCount(3000); // 10x plateau steps
-
+      annealingEngine.setMaxPlateauSteps(Long.parseLong(specification.getGeneratorSetting(StructureGeneratorSettingsPage.generatorNameUserConfigurable, "maxPlateauSteps")));
+      annealingEngine.setConvergenceStopCount(annealingEngine.getMaxPlateauSteps()*10);
+      annealingEngine.setMaxUphillSteps(Long.parseLong(specification.getGeneratorSetting(StructureGeneratorSettingsPage.generatorNameUserConfigurable, "maxUphillSteps")));
+      annealingEngine.setConvergenceStopCount(Long.parseLong(specification.getGeneratorSetting(StructureGeneratorSettingsPage.generatorNameUserConfigurable, "convergenceStopCount")));
+      annealingEngine.setInitializationCycles(Integer.parseInt(specification.getGeneratorSetting(StructureGeneratorSettingsPage.generatorNameUserConfigurable, "initializationCycles")));
+      annealingEngine.setCoolingRate(Double.parseDouble(specification.getGeneratorSetting(StructureGeneratorSettingsPage.generatorNameUserConfigurable, "coolingRate")));
+      annealingEngine.setAcceptanceProbability(Double.parseDouble(specification.getGeneratorSetting(StructureGeneratorSettingsPage.generatorNameUserConfigurable, "acceptanceProbability")));
+      
       logger.debug("Annealing engine initialized");
 
       ScoreSummary recentScore = new ScoreSummary((long) 0, "nop");

@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import net.bioclipse.cdk.domain.ICDKMolecule;
 import net.bioclipse.core.util.LogUtils;
 import net.bioclipse.seneca.anneal.AnnealerAdapterI;
 import net.bioclipse.seneca.anneal.AnnealingEngineI;
@@ -23,6 +24,7 @@ import net.bioclipse.seneca.anneal.MoleculeState;
 import net.bioclipse.seneca.anneal.State;
 import net.bioclipse.seneca.anneal.StateListener;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
+import net.bioclipse.seneca.editor.StructureGeneratorSettingsPage;
 import net.bioclipse.seneca.editor.TemperatureAndScoreListener;
 import net.bioclipse.seneca.ga.MoleculeCandidateFactory;
 import net.bioclipse.seneca.ga.MoleculeCrossover;
@@ -36,6 +38,7 @@ import net.bioclipse.seneca.util.StructureGeneratorResult;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.io.MDLWriter;
@@ -57,6 +60,8 @@ import org.uncommons.watchmaker.framework.termination.UserAbort;
  */
 public class GAStructureElucidationJob implements StateListener, ICASEJob {
 
+	private SenecaJobSpecification            specification = null;
+	
     private static final Logger               logger                 =
          Logger.getLogger( GAStructureElucidationJob.class );
 
@@ -150,7 +155,17 @@ public class GAStructureElucidationJob implements StateListener, ICASEJob {
             terminations[0] = new Stagnation( 20, true );
             terminations[1] = userAbort;
             startTime = System.currentTimeMillis();
-            IMolecule result = engine.evolve( 10, 1, terminations );
+            IMolecule result = null;
+            if(specification.getGeneratorSetting(StructureGeneratorSettingsPage.gaGeneratorName, "initialfile")!=null){
+            	List<ICDKMolecule> mols = net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().loadMolecules(specification.getGeneratorSetting(StructureGeneratorSettingsPage.gaGeneratorName, "initialfile"));
+            	List<IMolecule> seed = new ArrayList<IMolecule>();
+            	for(int i=0;i<mols.size();i++){
+            		seed.add(DefaultChemObjectBuilder.getInstance().newMolecule(mols.get(i).getAtomContainer()));
+            	}
+            	result = engine.evolve( 10, 1, seed, terminations );
+            }else{
+            	result = engine.evolve( 10, 1, terminations );
+            }
             StringWriter sw = new StringWriter();
             MDLWriter writer = new MDLWriter( sw );
             writer.writeMolecule( result );
@@ -188,16 +203,16 @@ public class GAStructureElucidationJob implements StateListener, ICASEJob {
 
         org.openscience.cdk.interfaces.IMolecule best =
                 ((MoleculeState) state).molecule;
-        best.setProperty( "Score", ((MoleculeState) state).score );
+        best.setProperty( "Score", ((MoleculeState) state).score/chiefJustice.calcMaxScore() );
         best.setProperty( "Steps so far", ((MoleculeState) state).getStep() );
         sgr.structures.push( best );
         for ( int i = 0; i < scoreImprovedListeners.size(); i++ ) {
             scoreImprovedListeners.get( i ).betterScore( best );
         }
-        score = ((MoleculeState) state).score;
+        score = ((MoleculeState) state).score/chiefJustice.calcMaxScore();
         if ( monitor.isCanceled() )
             userAbort.abort();
-        this.monitor.subTask( "Best score: " + ((MoleculeState) state).score
+        this.monitor.subTask( "Best score: " + ((MoleculeState) state).score/chiefJustice.calcMaxScore()
                               + ", s="
                               + (System.currentTimeMillis() - startTime) / 1000
                               + ", #" + state.getStep() );
@@ -225,7 +240,7 @@ public class GAStructureElucidationJob implements StateListener, ICASEJob {
     }
 
     public void setJobSpecification( SenecaJobSpecification specification ) {
-        // we do nothing with the specification here
+        this.specification = specification;
     }
 
 }

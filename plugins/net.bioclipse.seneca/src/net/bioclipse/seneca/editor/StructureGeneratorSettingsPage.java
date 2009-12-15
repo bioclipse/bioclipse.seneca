@@ -10,12 +10,34 @@
  *******************************************************************************/
 package net.bioclipse.seneca.editor;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import net.bioclipse.chemoinformatics.util.ChemoinformaticUtils;
+import net.bioclipse.core.util.LogUtils;
+import net.bioclipse.seneca.Activator;
 import net.bioclipse.seneca.anneal.AdaptiveAnnealingEngine;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
+import net.bioclipse.seneca.judge.IJudge;
 import net.bioclipse.seneca.structgen.ConvergenceAnnealingEngine;
 
+import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -23,6 +45,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -37,6 +62,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class StructureGeneratorSettingsPage extends FormPage implements IDirtyablePage {
 
+	private static Logger logger = Logger.getLogger(StructureGeneratorSettingsPage.class);
 	public boolean isDirty = false;
 
 	// items for the pubchem generator
@@ -75,6 +101,9 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
   private Text convergenceStopCount;
   private Text maxUphillSteps;
   private Text maxPlateauSteps;
+  
+  //items for the GA engine
+  private Label filelabel;
 
   //the generators
   public static final String generatorName = "org.openscience.cdk.structgen.RandomGenerator";
@@ -326,42 +355,78 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
     settingsSection.setText("GA Engine Settings");
     settingsSectionClient = toolkit.createComposite(settingsSection);
     settingsSectionClient.setLayout(new GridLayout());
-    /*this.acceptanceProb = createSettingField(toolkit, settingsSectionClient, this.acceptanceProb,
-      "Acceptance Probability :", generatorName, "acceptanceProbability",
-      Double.toString(ConvergenceAnnealingEngine.INITIALACCEPTANCEPROBABILITY)
-    );
-    this.maxPlateauSteps = createSettingField(toolkit, settingsSectionClient, this.maxPlateauSteps,
-      "Maximum Plateau Steps :", generatorName, "maxPlateauSteps",
-      Long.toString(ConvergenceAnnealingEngine.MAXPLATEAUSTEPS)
-    );
-    this.maxUphillSteps = createSettingField(toolkit, settingsSectionClient, this.maxUphillSteps,
-      "Maximum Uphill Steps :", generatorName, "maxUphillSteps",
-      Long.toString(ConvergenceAnnealingEngine.MAXUPHILLSTEPS)
-    );
-    this.convergenceStopCount = createSettingField(toolkit, settingsSectionClient, this.convergenceStopCount,
-      "Convergence Stop Count :", generatorName, "convergenceStopCount",
-      Long.toString(ConvergenceAnnealingEngine.CONVERGENCESTOPCOUNT)
-    );
-    this.coolingRate = createSettingField(toolkit, settingsSectionClient, this.coolingRate,
-      "Cooling Rate :", generatorName, "coolingRate",
-      Double.toString(ConvergenceAnnealingEngine.COOLINGRATE)
-    );
-    this.initCycles = createSettingField(toolkit, settingsSectionClient, this.initCycles,
-      "Number of Initialization Cycles :", generatorName, "initializationCycles",
-      Integer.toString(ConvergenceAnnealingEngine.INITIALIZATIONCYCLES)
-    );*/
+    //we add a drop target for initial files
+    toolkit.createLabel( settingsSectionClient,"You can give initial seed structures. If nothing given, random structures will be generated");
+    filelabel = toolkit.createLabel( settingsSectionClient,"Drop structure file here                ");
+    enabledGA.addSelectionListener( new SelectionListener(){
+        public void widgetDefaultSelected( SelectionEvent e ) {
+            filelabel.setEnabled( enabledGA.getSelection() );
+            filelabel.setText( "Drop structure file here                " );
+        }
+        public void widgetSelected( SelectionEvent e ) {
+            filelabel.setEnabled( enabledGA.getSelection() );
+            filelabel.setText( "Drop structure file here                " );
+        }
+    });
+    filelabel.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+    if(!enabledGA.getSelection())
+        filelabel.setEnabled( false );
+    if(specification.getGeneratorSetting(gaGeneratorName, "initialfile")!=null)
+        filelabel.setText( "Data file: "+ specification.getGeneratorSetting(gaGeneratorName, "initialfile") );
+    // Create the drop target
+    DropTarget target = new DropTarget(filelabel, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_DEFAULT);
+    Transfer[] types = new Transfer[] { LocalSelectionTransfer.getTransfer(), FileTransfer.getInstance()};
+    target.setTransfer(types);
+    target.addDropListener(new DropTargetAdapter() {
+      public void dragEnter(DropTargetEvent event) {
+        if (event.detail == DND.DROP_DEFAULT) {
+          event.detail = (event.operations & DND.DROP_COPY) != 0 ? DND.DROP_COPY : DND.DROP_NONE;
+        }
+      }
+
+      public void dragOver(DropTargetEvent event) {
+         event.feedback = DND.FEEDBACK_SELECT | DND.FEEDBACK_SCROLL;
+      }
+      public void drop(DropTargetEvent event) {
+          DropTarget target = (DropTarget) event.widget;
+          Label label = (Label) target.getControl();
+          Object data =  event.data;
+          if (data instanceof IStructuredSelection){
+              IStructuredSelection ssel = (IStructuredSelection) data;
+              if(ssel.size()>1){
+                  MessageBox mb = new MessageBox(new Shell(), SWT.ICON_WARNING);
+                  mb.setText("Multiple Files");
+                  mb.setMessage("Only one file can be dropped on here!");
+                  mb.open();
+              }else{
+                  if (ssel.getFirstElement() instanceof IFile) {
+                	  IFile file = (IFile) ssel.getFirstElement();
+                	  try {
+						  if(ChemoinformaticUtils.isMolecule(file) || ChemoinformaticUtils.isMultipleMolecule(file)){
+							  filelabel.setText(file.getFullPath().toOSString());
+							  setDirty(true);
+						  }else{
+			                  MessageBox mb = new MessageBox(new Shell(), SWT.ICON_WARNING);
+			                  mb.setText("No Structure File");
+			                  mb.setMessage("Only a structure file (mdl, sdf, cml etc.) can be dropped on here!");
+			                  mb.open();							  
+						  }
+					  } catch (Exception e) {
+						  LogUtils.handleException(e, logger, Activator.PLUGIN_ID);
+					  }
+                  }
+              }
+          }
+          label.redraw();
+      }
+    });
     resetParamsButton = toolkit.createButton(settingsSectionClient, "Reset", SWT.PUSH);
     resetParamsButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
-            /*acceptanceProb.setText(Double.toString(ConvergenceAnnealingEngine.INITIALACCEPTANCEPROBABILITY));
-            maxPlateauSteps.setText(Long.toString(ConvergenceAnnealingEngine.MAXPLATEAUSTEPS));
-            maxUphillSteps.setText(Long.toString(ConvergenceAnnealingEngine.MAXUPHILLSTEPS));
-            convergenceStopCount.setText(Long.toString(ConvergenceAnnealingEngine.CONVERGENCESTOPCOUNT));
-            coolingRate.setText(Double.toString(ConvergenceAnnealingEngine.COOLINGRATE));
-            initCycles.setText(Integer.toString(ConvergenceAnnealingEngine.INITIALIZATIONCYCLES));*/
+        	filelabel.setText( "Drop structure file here                " );
+        	setDirty(true);
         }
     });
-
     settingsSection.setClient(settingsSectionClient);
 	}
 
@@ -421,6 +486,10 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
 	        specification.setGeneratorSetting(generatorNameUserConfigurable, "maxUphillSteps", maxUphillSteps.getText());
         
 	        specification.setGeneratorEnabled( classNameGA.getText(), enabledGA.getSelection() );
+	        if(filelabel.getText().indexOf("Drop structure file here")!=0)
+	        	specification.setGeneratorSetting( gaGeneratorName, "initialfile", filelabel.getText() );
+	        else
+	        	specification.setGeneratorSetting( gaGeneratorName, "initialfile", null );
 		}
 
 		this.setDirty(false);
@@ -435,34 +504,42 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
 		public void widgetDefaultSelected(SelectionEvent e) {}
 
 		public void widgetSelected(SelectionEvent e) {
-			// make sure only one generator is enabled!
-			if (e.getSource() == enabledStoch) {
-				enabledPubchem.setSelection(!enabledPubchem.getSelection());
-				enabledDeter.setSelection(!enabledStoch.getSelection());
-				enabledStochUserSettings.setSelection(!enabledStoch.getSelection());
-				enabledGA.setSelection(!enabledStoch.getSelection());
-			} else if (e.getSource() == enabledDeter) {
-				enabledPubchem.setSelection(!enabledPubchem.getSelection());
-				enabledStoch.setSelection(!enabledDeter.getSelection());
-				enabledStochUserSettings.setSelection(!enabledDeter.getSelection());
-				enabledGA.setSelection(!enabledDeter.getSelection());
-			} else if (e.getSource() == enabledStochUserSettings) {
-				enabledPubchem.setSelection(!enabledPubchem.getSelection());
-				enabledStoch.setSelection(!enabledStochUserSettings.getSelection());
-				enabledDeter.setSelection(!enabledStochUserSettings.getSelection());
-				enabledGA.setSelection(!enabledStochUserSettings.getSelection());
-			} else if (e.getSource() == enabledGA) {
-				enabledPubchem.setSelection(!enabledGA.getSelection());
-		        enabledStoch.setSelection(!enabledGA.getSelection());
-		        enabledStochUserSettings.setSelection(!enabledGA.getSelection());
-		        enabledDeter.setSelection(!enabledGA.getSelection());
-			} else if (e.getSource() == enabledPubchem) {
-		        enabledStoch.setSelection(!enabledPubchem.getSelection());
-		        enabledStochUserSettings.setSelection(!enabledPubchem.getSelection());
-		        enabledDeter.setSelection(!enabledPubchem.getSelection());
-				enabledGA.setSelection(!enabledPubchem.getSelection());
-		    }
-			setDirty(true);
+			if(!((Button)e.getSource()).getSelection()){
+				((Button)e.getSource()).setSelection(true);
+                MessageBox mb = new MessageBox(new Shell(), SWT.ICON_WARNING);
+                mb.setText("Deselect not possible");
+                mb.setMessage("You have to select an alternative generator, unselecting is not possible!");
+                mb.open();
+			}else{
+				// make sure only one generator is enabled!
+				if (e.getSource() == enabledStoch) {
+					enabledPubchem.setSelection(!enabledPubchem.getSelection());
+					enabledDeter.setSelection(!enabledStoch.getSelection());
+					enabledStochUserSettings.setSelection(!enabledStoch.getSelection());
+					enabledGA.setSelection(!enabledStoch.getSelection());
+				} else if (e.getSource() == enabledDeter) {
+					enabledPubchem.setSelection(!enabledPubchem.getSelection());
+					enabledStoch.setSelection(!enabledDeter.getSelection());
+					enabledStochUserSettings.setSelection(!enabledDeter.getSelection());
+					enabledGA.setSelection(!enabledDeter.getSelection());
+				} else if (e.getSource() == enabledStochUserSettings) {
+					enabledPubchem.setSelection(!enabledPubchem.getSelection());
+					enabledStoch.setSelection(!enabledStochUserSettings.getSelection());
+					enabledDeter.setSelection(!enabledStochUserSettings.getSelection());
+					enabledGA.setSelection(!enabledStochUserSettings.getSelection());
+				} else if (e.getSource() == enabledGA) {
+					enabledPubchem.setSelection(!enabledGA.getSelection());
+			        enabledStoch.setSelection(!enabledGA.getSelection());
+			        enabledStochUserSettings.setSelection(!enabledGA.getSelection());
+			        enabledDeter.setSelection(!enabledGA.getSelection());
+				} else if (e.getSource() == enabledPubchem) {
+			        enabledStoch.setSelection(!enabledPubchem.getSelection());
+			        enabledStochUserSettings.setSelection(!enabledPubchem.getSelection());
+			        enabledDeter.setSelection(!enabledPubchem.getSelection());
+					enabledGA.setSelection(!enabledPubchem.getSelection());
+			    }
+				setDirty(true);
+			}
 		}
 	}
 
