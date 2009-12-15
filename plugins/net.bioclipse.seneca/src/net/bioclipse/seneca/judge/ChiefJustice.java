@@ -164,6 +164,11 @@ public class ChiefJustice {
 		this.judges.remove(judge);
 	}
 
+	/**
+	 * This method executes a labelling on all judges where it is necessary.
+	 * 
+	 * @param arg0 The molecule to label
+	 */
 	public void label(IMolecule arg0) {
 		for(int i=0;i<judges.size();i++){
             if(judges.get(i).isLabelling()){

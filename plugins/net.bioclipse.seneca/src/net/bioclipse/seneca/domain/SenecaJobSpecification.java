@@ -267,19 +267,25 @@ public class SenecaJobSpecification {
 			generatorNode = (Element)generatorNodes.get(0);
 		}
 		Nodes result = generatorNode.query("./sjs:" + field, context);
-		if (result.size() > 0) {
-			Element settingNode = (Element)result.get(0);
-			Attribute attr = settingNode.getAttribute("value");
-			if (attr == null) {
-				settingNode.addAttribute(new Attribute("value", value));
-			} else if (!attr.getValue().equals(value)){
-				attr.setValue(value);
+		if(value!=null){
+			if (result.size() > 0) {
+				Element settingNode = (Element)result.get(0);
+				Attribute attr = settingNode.getAttribute("value");
+				if (attr == null) {
+					settingNode.addAttribute(new Attribute("value", value));
+				} else if (!attr.getValue().equals(value)){
+					attr.setValue(value);
+				}
+			} else {
+				// add new element
+				Element judgeElem = new Element(field, NAMESPACE);
+				judgeElem.addAttribute(new Attribute("value", value));
+				generatorNode.appendChild(judgeElem);
 			}
-		} else {
-			// add new element
-			Element judgeElem = new Element(field, NAMESPACE);
-			judgeElem.addAttribute(new Attribute("value", value));
-			generatorNode.appendChild(judgeElem);
+		}else{
+			if (result.size() > 0) {
+				generatorNode.removeChild(result.get(0));
+			}
 		}
 	}
 

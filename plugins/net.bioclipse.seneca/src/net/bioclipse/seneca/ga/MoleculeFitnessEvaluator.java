@@ -32,6 +32,7 @@ public class MoleculeFitnessEvaluator implements FitnessEvaluator<IMolecule> {
     
 
     public double getFitness( IMolecule arg0, List<? extends IMolecule> arg1 ) {
+    	justice.label(arg0);
         return justice.getScore( arg0).score;
     }
 
