@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import net.bioclipse.core.domain.ISpectrum;
@@ -30,6 +31,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.structgen.pubchem.PubchemStructureGenerator;
 import org.xmlcml.cml.base.CMLElement;
@@ -131,8 +134,15 @@ public class PubchemStructureElucidationJob
 				List<IMolecule> result=PubchemStructureGenerator.doDownload(specification.getMolecularFormula());
 				end = System.currentTimeMillis();
 				for(int i=0;i<result.size();i++){
-					if(stateChanged(result.get(i)))
-						break;
+					//we need to check for H counts since pubchem search ignores these
+					IMolecule mol = result.get(i);
+            		AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol);
+                    CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(mol);
+					if(checkForHCountValidity(specification, mol)){
+						if(stateChanged(result.get(i)))
+							break;
+						System.err.println("result");
+					}
 				}
 			}catch(IOException ex){
 				LogUtils.handleException(ex, logger, Activator.PLUGIN_ID);
@@ -146,6 +156,35 @@ public class PubchemStructureElucidationJob
 
 		monitor.done();
 		return sgr;
+	}
+
+	/**
+	 * Tells if a molecule has the hydrogen counts on its carbons as in a specification.
+	 * 
+	 * @param specification2 The specification to check against.
+	 * @param mol            The molecule to check.
+	 * @return               True=molecule is valid, false=molecule is invalid.
+	 */
+	public static boolean checkForHCountValidity(
+			SenecaJobSpecification specification2, IAtomContainer mol) {
+		int[] hcounts = new int[4];
+		for(IAtom atom : mol.atoms()){
+			if(atom.getSymbol().equals("C")){
+				int hcount=atom.getHydrogenCount();
+				Iterator<IAtom> it = mol.getConnectedAtomsList(atom).iterator();
+				while(it.hasNext()){
+					if(it.next().getSymbol().equals("H")){
+						hcount++;
+					}
+				}
+				hcounts[hcount]++;
+			}
+		}
+		for(int i=0;i<4;i++){
+			if(hcounts[i]!=specification2.getDeptData(i))
+				return false;
+		}
+		return true;
 	}
 
 	/**

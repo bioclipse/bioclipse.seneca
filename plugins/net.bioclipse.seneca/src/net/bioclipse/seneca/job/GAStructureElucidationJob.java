@@ -42,6 +42,8 @@ import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.io.MDLWriter;
+import org.openscience.cdk.tools.CDKHydrogenAdder;
+import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.CandidateFactory;
 import org.uncommons.watchmaker.framework.ConcurrentEvolutionEngine;
@@ -159,18 +161,29 @@ public class GAStructureElucidationJob implements StateListener, ICASEJob {
             if(specification.getGeneratorSetting(StructureGeneratorSettingsPage.gaGeneratorName, "initialfile")!=null){
             	List<ICDKMolecule> mols = net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().loadMolecules(specification.getGeneratorSetting(StructureGeneratorSettingsPage.gaGeneratorName, "initialfile"));
             	List<IMolecule> seed = new ArrayList<IMolecule>();
+            	int wrongseeds=0;
             	for(int i=0;i<mols.size();i++){
-            		seed.add(DefaultChemObjectBuilder.getInstance().newMolecule(mols.get(i).getAtomContainer()));
+                	try{
+	            		AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mols.get(i).getAtomContainer());
+	                    CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(mols.get(i).getAtomContainer());
+	            		if(PubchemStructureElucidationJob.checkForHCountValidity(specification, mols.get(i).getAtomContainer()))
+	            			seed.add(DefaultChemObjectBuilder.getInstance().newMolecule(mols.get(i).getAtomContainer()));
+	            		else
+	            			wrongseeds++;
+                	}catch(Exception ex){
+                		ex.printStackTrace();
+                		wrongseeds++;
+                	}
             	}
+            	if(wrongseeds>0){
+            		System.out.println(wrongseeds+" of your "+mols.size()+" initial structures had a wrong hcount. We will not use them!");
+            	}
+            	if(seed.size()>0)
+            		System.err.println("Seed "+chiefJustice.getScore(seed.get(0)));
             	result = engine.evolve( 10, 1, seed, terminations );
             }else{
             	result = engine.evolve( 10, 1, terminations );
             }
-            StringWriter sw = new StringWriter();
-            MDLWriter writer = new MDLWriter( sw );
-            writer.writeMolecule( result );
-            System.err.println( sw.toString() );
-            System.out.println( result );
         } catch ( Exception exception ) {
             exception.printStackTrace();
             LogUtils.handleException( exception, logger,
@@ -222,9 +235,11 @@ public class GAStructureElucidationJob implements StateListener, ICASEJob {
 
     public void temperatureChange( double temp ) {
 
-        for ( TemperatureAndScoreListener templistener : temperatureListeners ) {
-            templistener.change( temp, score );
-        }
+    	if(score!=0 || temp!=0){
+	        for ( TemperatureAndScoreListener templistener : temperatureListeners ) {
+	            templistener.change( temp, score );
+	        }
+    	}
     }
 
     public void addScoreImprovedListener( IScoreImprovedListener listener ) {

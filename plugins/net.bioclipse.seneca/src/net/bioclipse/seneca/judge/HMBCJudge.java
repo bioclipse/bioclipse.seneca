@@ -42,6 +42,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.xmlcml.cml.base.CMLBuilder;
 import org.xmlcml.cml.base.CMLUtil;
@@ -227,7 +228,7 @@ public class HMBCJudge extends TwoDSpectrumJudge {
 			if(spectrum.getType().equals("HSQC")){
 				for(int k=0;k<spectrum.getPeakListElements().get(0).getPeakElements().size();k++){
 					for(int l=0;l<startStructure.getAtomCount();l++){
-						if((Double)startStructure.getAtom(l).getProperty(C_SHIFT)==spectrum.getPeakListElements().get(0).getPeakElements().get(k).getXValue()){
+						if((Double)startStructure.getAtom(l).getProperty(C_SHIFT)!=null && (Double)startStructure.getAtom(l).getProperty(C_SHIFT)==spectrum.getPeakListElements().get(0).getPeakElements().get(k).getXValue()){
 							if(startStructure.getAtom(l).getProperty(H_SHIFT)==null)
 								startStructure.getAtom(l).setProperty(H_SHIFT,spectrum.getPeakListElements().get(0).getPeakElements().get(k).getYValue());
 							else

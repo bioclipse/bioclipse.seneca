@@ -372,7 +372,7 @@ public class StructureGeneratorSettingsPage extends FormPage implements IDirtyab
     if(!enabledGA.getSelection())
         filelabel.setEnabled( false );
     if(specification.getGeneratorSetting(gaGeneratorName, "initialfile")!=null)
-        filelabel.setText( "Data file: "+ specification.getGeneratorSetting(gaGeneratorName, "initialfile") );
+        filelabel.setText( specification.getGeneratorSetting(gaGeneratorName, "initialfile") );
     // Create the drop target
     DropTarget target = new DropTarget(filelabel, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_DEFAULT);
     Transfer[] types = new Transfer[] { LocalSelectionTransfer.getTransfer(), FileTransfer.getInstance()};
