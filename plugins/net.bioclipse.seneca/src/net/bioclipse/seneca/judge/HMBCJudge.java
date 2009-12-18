@@ -61,9 +61,9 @@ public class HMBCJudge extends TwoDSpectrumJudge {
 
     private static Logger logger = Logger.getLogger(HMBCJudge.class);
 	CMLCml cmlcml;
-	static final String C_SHIFT="C_SHIFT";
-	static final String H_SHIFT="H_SHIFT";
-	static final String H_SHIFT_2="H_SHIFT_2";
+	public static final String C_SHIFT="C_SHIFT";
+	public static final String H_SHIFT="H_SHIFT";
+	public static final String H_SHIFT_2="H_SHIFT_2";
 	
 	public HMBCJudge() {
 		super("HMBC Scoring");
