@@ -39,6 +39,7 @@ public class SenecaJobSpecification {
 	private static final String ATTRIB_NAME_ENABLED = "enabled";
 	private static final String ATTRIB_VALUE_TRUE = "true";
 	private static final String ATTRIB_VALUE_FALSE = "false";
+	private static final String ATTRIB_NAME_WEIGHT = "weight";
 
 	private static final String NAMESPACE = "http://cdk.sf.net/seneca/";
 	private XPathContext context = new XPathContext("sjs", NAMESPACE);
@@ -328,4 +329,26 @@ public class SenecaJobSpecification {
   
       return jobDirectory;
   }
+
+  
+	public int getWeight(String id) {
+		Nodes result = root.query("./sjs:judge[./@id='" + id + "']", context);
+		if (result.size() > 0) {
+			if (((Element)result.get(0)).getAttribute(ATTRIB_NAME_WEIGHT)!=null){
+				return Integer.parseInt(((Element)result.get(0)).getAttribute(ATTRIB_NAME_WEIGHT).getValue());
+			}
+		}
+		return 1;	
+	}
+
+	public void setWeight(String id, int weight) {
+		Nodes result = root.query("./sjs:judge[./@id='" + id + "']", context);
+		if(result.size()>0){
+			if (((Element)result.get(0)).getAttribute(ATTRIB_NAME_WEIGHT)!=null){
+				((Element)result.get(0)).getAttribute(ATTRIB_NAME_WEIGHT).setValue(Integer.toString(weight));
+			}else{
+				((Element)result.get(0)).addAttribute(new Attribute(ATTRIB_NAME_WEIGHT,Integer.toString(weight)));
+			}
+		}
+	}
 }

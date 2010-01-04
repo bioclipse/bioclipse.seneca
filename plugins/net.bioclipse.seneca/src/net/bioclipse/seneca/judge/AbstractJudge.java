@@ -57,6 +57,7 @@ public abstract class AbstractJudge implements IJudge {
 	 * Should this Judge be used during the evaluation process?
 	 */
 	private boolean enabled = false;
+	private int weight=1;
 	private boolean initialized = false;
 	static boolean debug = false;
 	static boolean report = true;
@@ -227,4 +228,11 @@ public abstract class AbstractJudge implements IJudge {
   abstract public IJudge createJudge(IPath data)
 	throws MissingInformationException;
 
+  public void setWeight(int weight){
+	this.weight=weight;  
+  }
+  
+  public int getWeight(){
+	  return weight;
+  }
 }

@@ -182,4 +182,8 @@ public interface IJudge {
 	 */
 	public abstract void labelStartStructure(IAtomContainer startStructure);
 
+
+	public abstract void setWeight(int weight);
+	public abstract int getWeight();
+
 }

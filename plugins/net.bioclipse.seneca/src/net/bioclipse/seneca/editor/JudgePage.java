@@ -10,30 +10,18 @@
  *******************************************************************************/
 package net.bioclipse.seneca.editor;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import net.bioclipse.core.util.LogUtils;
 import net.bioclipse.seneca.Activator;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
 import net.bioclipse.seneca.judge.IJudge;
-import net.bioclipse.spectrum.domain.IJumboSpectrum;
-import net.bioclipse.spectrum.domain.JumboSpectrum;
-import net.bioclipse.spectrum.editor.MetadataUtils;
-import net.bioclipse.spectrum.editor.SpectrumEditor;
 
 import org.apache.log4j.Logger;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -43,6 +31,8 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -50,8 +40,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -62,10 +51,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.xmlcml.cml.base.CMLElements;
-import org.xmlcml.cml.element.CMLMetadata;
-import org.xmlcml.cml.element.CMLMetadataList;
-import org.xmlcml.cml.element.CMLSpectrum;
 
 public class JudgePage extends FormPage implements IDirtyablePage {
 
@@ -116,62 +101,75 @@ public class JudgePage extends FormPage implements IDirtyablePage {
 			section.setText(factory.getName());
 			section.setToolTipText(factory.getName());
 			Composite sectionClient = toolkit.createComposite(section);
-      GridData layoutData = new GridData(SWT.LEFT, SWT.BOTTOM,true,true);
-      layoutData.widthHint=500;
+			GridData layoutData = new GridData(SWT.LEFT, SWT.BOTTOM,true,true);
+			layoutData.widthHint=500;
 			sectionClient.setLayoutData( layoutData );
 			sectionClient.setLayout(new GridLayout());
 			Label description = toolkit.createLabel( sectionClient, factory.getDescription());
 			final Button button = toolkit.createButton(sectionClient, "Enable", SWT.CHECK);
 			button.addSelectionListener(new EnableJudgeListener(factory));
 			button.setSelection(specification.getJudgeEnabled(judgeName));
-      final Label filelabel = toolkit.createLabel( sectionClient,"Drop spectrum file here                ");
-      button.addSelectionListener( new SelectionListener(){
-          public void widgetDefaultSelected( SelectionEvent e ) {
-              filelabel.setEnabled( button.getSelection() );
-              filelabel.setText( "Drop spectrum file here                " );
-              judges.get(button.getParent().getParent().getToolTipText()).setEnabled( button.getSelection() );
-          }
-          public void widgetSelected( SelectionEvent e ) {
-              filelabel.setEnabled( button.getSelection() );
-              filelabel.setText( "Drop spectrum file here                " );
-              judges.get(button.getParent().getParent().getToolTipText()).setEnabled( button.getSelection() );
-          }
-      });
-      filelabel.setLayoutData( layoutData );
-      if(!button.getSelection())
-          filelabel.setEnabled( false );
-      if(specification.getJudgesData().get( judgeName )!=null)
-          filelabel.setText( "Data file: "+specification.getJudgesData().get( judgeName ) );
-      // Create the drop target
-      DropTarget target = new DropTarget(filelabel, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_DEFAULT);
-      Transfer[] types = new Transfer[] { LocalSelectionTransfer.getTransfer(), FileTransfer.getInstance()};
-      target.setTransfer(types);
-      target.addDropListener(new DropTargetAdapter() {
-        public void dragEnter(DropTargetEvent event) {
-          if (event.detail == DND.DROP_DEFAULT) {
-            event.detail = (event.operations & DND.DROP_COPY) != 0 ? DND.DROP_COPY : DND.DROP_NONE;
-          }
-        }
-
-        public void dragOver(DropTargetEvent event) {
-           event.feedback = DND.FEEDBACK_SELECT | DND.FEEDBACK_SCROLL;
-        }
-        public void drop(DropTargetEvent event) {
-            DropTarget target = (DropTarget) event.widget;
-            Label label = (Label) target.getControl();
-            Object data =  event.data;
-            if (data instanceof IStructuredSelection){
-                IJudge judge = judges.get(label.getParent().getParent().getToolTipText());
-                IFile processedFile = judge.setData( (IStructuredSelection) data, senecaeditor.getInputFile());
-                if(processedFile!=null){
-                  label.setText( "Data file: "+processedFile.getName() );
-                  factory.setData( new Path(processedFile.getName()) );
-                  setDirty(true);
-                }
-            }
-            label.redraw();
-        }
-      });
+			Label spinnerlabel = toolkit.createLabel( sectionClient, "Weight:");
+			final Spinner weightSpinner = new Spinner(sectionClient, SWT.NONE);
+			weightSpinner.setMinimum(0);
+			weightSpinner.setIncrement(1);
+			weightSpinner.setMaximum(100);
+			weightSpinner.setSelection(specification.getWeight(judgeName));
+			weightSpinner.addModifyListener(new ModifyListener(){
+				public void modifyText(ModifyEvent e) {
+					judges.get(button.getParent().getParent().getToolTipText()).setWeight( Integer.parseInt(weightSpinner.getText()) );
+					setDirty(true);
+				}
+			});
+			toolkit.adapt(weightSpinner);
+			final Label filelabel = toolkit.createLabel( sectionClient,"Drop spectrum file here                ");
+			button.addSelectionListener( new SelectionListener(){
+		          public void widgetDefaultSelected( SelectionEvent e ) {
+		              filelabel.setEnabled( button.getSelection() );
+		              filelabel.setText( "Drop spectrum file here                " );
+		              judges.get(button.getParent().getParent().getToolTipText()).setEnabled( button.getSelection() );
+		          }
+		          public void widgetSelected( SelectionEvent e ) {
+		              filelabel.setEnabled( button.getSelection() );
+		              filelabel.setText( "Drop spectrum file here                " );
+		              judges.get(button.getParent().getParent().getToolTipText()).setEnabled( button.getSelection() );
+		          }
+		      });
+		      filelabel.setLayoutData( layoutData );
+		      if(!button.getSelection())
+		          filelabel.setEnabled( false );
+		      if(specification.getJudgesData().get( judgeName )!=null)
+		          filelabel.setText( "Data file: "+specification.getJudgesData().get( judgeName ) );
+		      // Create the drop target
+		      DropTarget target = new DropTarget(filelabel, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_DEFAULT);
+		      Transfer[] types = new Transfer[] { LocalSelectionTransfer.getTransfer(), FileTransfer.getInstance()};
+		      target.setTransfer(types);
+		      target.addDropListener(new DropTargetAdapter() {
+		        public void dragEnter(DropTargetEvent event) {
+		          if (event.detail == DND.DROP_DEFAULT) {
+		            event.detail = (event.operations & DND.DROP_COPY) != 0 ? DND.DROP_COPY : DND.DROP_NONE;
+		          }
+		        }
+		
+		        public void dragOver(DropTargetEvent event) {
+		           event.feedback = DND.FEEDBACK_SELECT | DND.FEEDBACK_SCROLL;
+		        }
+		        public void drop(DropTargetEvent event) {
+		            DropTarget target = (DropTarget) event.widget;
+		            Label label = (Label) target.getControl();
+		            Object data =  event.data;
+		            if (data instanceof IStructuredSelection){
+		                IJudge judge = judges.get(label.getParent().getParent().getToolTipText());
+		                IFile processedFile = judge.setData( (IStructuredSelection) data, senecaeditor.getInputFile());
+		                if(processedFile!=null){
+		                  label.setText( "Data file: "+processedFile.getName() );
+		                  factory.setData( new Path(processedFile.getName()) );
+		                  setDirty(true);
+		                }
+		            }
+		            label.redraw();
+		        }
+		      });
 			section.setClient(sectionClient);
 		}
 	}
@@ -199,6 +197,8 @@ public class JudgePage extends FormPage implements IDirtyablePage {
 		  IJudge judge = judges.get(judgeFactories.next().getName());
 			specification.setJudgeEnabled(
 					judge.getClass().getName(), judge.getEnabled());
+			specification.setWeight(
+					judge.getClass().getName(), judge.getWeight());
 			if(judge.getEnabled() && judge.getData()!=null)			    
 			    specification.setJudgeData( judge.getClass().getName(), judge.getData().toFile().getName() );
 			else

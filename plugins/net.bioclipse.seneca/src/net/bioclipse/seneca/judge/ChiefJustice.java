@@ -101,6 +101,9 @@ public class ChiefJustice {
 			if (judge.getEnabled()) {
 				try {
 					JudgeResult ser = judge.evaluate(molecule);
+					//we adopt to values to weight
+					ser.score=ser.score/ser.maxScore*judge.getWeight();
+					ser.maxScore=judge.getWeight();
 					maxScore += ser.maxScore;
 					score += ser.score;
 					if (debug) {
@@ -128,7 +131,7 @@ public class ChiefJustice {
        for (int f = 0; f < judges.size(); f++) {
          IJudge judge = (IJudge) judges.get(f);
          if (judge.getEnabled()) {
-             maxScore += judge.getMaxScore();
+             maxScore += judge.getWeight();
          }
        }
        return maxScore;
