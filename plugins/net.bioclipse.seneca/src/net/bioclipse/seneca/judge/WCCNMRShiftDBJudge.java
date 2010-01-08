@@ -126,7 +126,6 @@ public class WCCNMRShiftDBJudge extends Abstract13CJudge implements IJudge {
 		    .getJavaSpectrumManager().calculateSimilarityWCC(
 		        this.carbonShifts, shiftsarray, 20.0);
 		String message = "Score: " + scoreSum + "/" + maxScore;
-		System.err.println(message);
 		return new JudgeResult(maxScore, scoreSum, 0, message);
 	}
 
