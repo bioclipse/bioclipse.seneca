@@ -18,10 +18,10 @@
    </extension>
 
    <extension point="org.eclipse.ui.newWizards">
-      <category id="net.bioclipse.seneca" name="Seneca"/>
+      <category name="SENECA" id="net.bioclipse.seneca.category"/>
 
 	  <wizard canFinishEarly="false"
-         category="net.bioclipse.seneca"
+         category="net.bioclipse.seneca.category"
          class="net.bioclipse.seneca.wizard.NewSenecaJobWizard"
          hasPages="true"
          icon="icons/molecule16.gif"
@@ -46,7 +46,6 @@
    <!-- SENECA views -->
 
    <extension point="org.eclipse.ui.views">
-      <category name="SENECA" id="net.bioclipse.seneca.category"/>
       <view name="Elucidation Progress"
 	        icon="icons/molecule16.gif"
             category="net.bioclipse.seneca.category"
@@ -56,23 +55,6 @@
    </extension>
 
    <!-- the judges -->
-
- 	<!--extension
-         point="net.bioclipse.seneca.SenecaJudge">
-      <CASEJudge
-            class="net.bioclipse.seneca.judge.HHCOSYJudge"
-            id="HHCOSYJudge"
-            name="HHCOSYJudge"/>
-   </extension-->
-
-   <!--extension
-         point="net.bioclipse.seneca.SenecaJudge">
-      <CASEJudge
-            class="net.bioclipse.seneca.judge.WCCHOSECodeDEPTJudge"
-            id="WCCHOSECodeDEPTJudge"
-            name="WCCHOSECodeDEPTJudge"/>
-   </extension-->
-
    <extension
          point="net.bioclipse.seneca.SenecaJudge">
       <CASEJudge
@@ -103,5 +85,49 @@
           id="net.bioclipse.seneca.SenecaPerspective"
           icon="icons/molecule16.gif">
       </perspective>
+   </extension>
+   
+   <extension
+        point="org.eclipse.ui.commands">
+     <command
+           id="net.bioclipse.seneca.commands.EvaluateCommand"
+           categoryId="net.bioclipse.seneca.category"
+           name="Dummy"/>
+   </extension>
+   
+   <extension
+        point="org.eclipse.ui.handlers">
+     <handler
+        class="net.bioclipse.seneca.actions.EvaluateHandler"
+        commandId="net.bioclipse.seneca.commands.EvaluateCommand">
+     </handler>
+   </extension> 
+   
+   <extension point="org.eclipse.ui.menus">
+   	 <menuContribution
+           locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+        <command
+              commandId="net.bioclipse.seneca.commands.EvaluateCommand"
+               icon="icons/molecule16.gif"
+               label="Evaluate with Seneca scoring functions ..."
+              >
+        <visibleWhen>
+   		<iterate operator="and" ifEmpty="false">
+      			<adapt type="org.eclipse.core.resources.IResource">
+      			<or>
+                    <test property="org.eclipse.core.resources.contentTypeId" 
+           	    		value="net.bioclipse.contenttypes.mdlMolFile2D"/>
+   	      		    <test property="org.eclipse.core.resources.contentTypeId" 
+       	        		value="net.bioclipse.contenttypes.mdlMolFile3D"/>
+   	      		    <test property="org.eclipse.core.resources.contentTypeId" 
+       	        		value="net.bioclipse.contenttypes.cml.singleMolecule2d"/>
+   	      		    <test property="org.eclipse.core.resources.contentTypeId" 
+       	        		value="net.bioclipse.contenttypes.cml.singleMolecule3d"/>
+               	</or>
+      			</adapt>
+   		</iterate>
+        </visibleWhen>
+        </command>
+   	 </menuContribution>
    </extension>
 </plugin>
