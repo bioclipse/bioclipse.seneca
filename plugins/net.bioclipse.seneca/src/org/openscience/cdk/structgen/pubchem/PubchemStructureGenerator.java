@@ -27,6 +27,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.io.iterator.IteratingMDLReader;
@@ -77,21 +78,31 @@ public class PubchemStructureGenerator {
     
     private String webenv = null;
 
+    public static int worked=0;
     
-    public static List<IMolecule> doDownload(String formula) throws TransformerConfigurationException, ParserConfigurationException, IOException, SAXException, FactoryConfigurationError, TransformerFactoryConfigurationError, TransformerException, NodeNotAvailableException{
+    public static List<IMolecule> doDownload(String formula, IProgressMonitor monitor) throws TransformerConfigurationException, ParserConfigurationException, IOException, SAXException, FactoryConfigurationError, TransformerFactoryConfigurationError, TransformerException, NodeNotAvailableException{
         PubchemStructureGenerator request = new PubchemStructureGenerator();
         request.submitInitalRequest(formula);
+        worked=0;
 
         while(!request.getStatus().isFinished()){
+        	if(monitor.isCanceled())
+        		return null;        	
             // looping and waiting
             request.refresh();
+            worked++;
+            monitor.worked(worked);
         }
 
         request.submitDownloadRequest();
         
         while(!request.getStatusDownload().isFinished()){
+        	if(monitor.isCanceled())
+        		return null;        	
             // looping and waiting
             request.refresh();
+            worked++;
+            monitor.worked(worked);
         }
 
         URLConnection uc = request.getResponseURL().openConnection();

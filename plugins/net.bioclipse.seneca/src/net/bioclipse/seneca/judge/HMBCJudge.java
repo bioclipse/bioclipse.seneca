@@ -99,7 +99,7 @@ public class HMBCJudge extends TwoDSpectrumJudge {
 	}
 
     public String getDescription() {
-    	return "A simple 2d HMBC scoring function. Configuration is in a jsx file right now";
+    	return "A simple 2d HMBC scoring function. Configuration is in a cml file right now (see examples/example2/2d.cml for an example)";
     }
 
     public boolean checkJudge( String data ) {

@@ -88,7 +88,7 @@ public class PubchemStructureElucidationJob
 
 	public boolean stateChanged(IMolecule molecule) {
 		structureCount += 1;
-		monitor.worked(structureCount);
+		monitor.worked(PubchemStructureGenerator.worked+structureCount);
 		System.out.print(structureCount + "; ");
 		molecule.setProperty("Score", chief.getScore(molecule).score);
 		molecule.setProperty( "Steps so far", structureCount );
@@ -108,7 +108,7 @@ public class PubchemStructureElucidationJob
 	            temperatureListeners.get( i ).change(0, (Double)molecule.getProperty("Score") );
 	        }	
 		}
-        this.monitor.worked( structureCount );
+        this.monitor.worked(PubchemStructureGenerator.worked+structureCount );
         if ( monitor.isCanceled() )
         	return true;
         else
@@ -133,7 +133,7 @@ public class PubchemStructureElucidationJob
 			System.out.println("Starting Structure Generation");
 			start = System.currentTimeMillis();
 			try{
-				List<IMolecule> result=PubchemStructureGenerator.doDownload(specification.getMolecularFormula());
+				List<IMolecule> result=PubchemStructureGenerator.doDownload(specification.getMolecularFormula(),monitor);
 				end = System.currentTimeMillis();
 				for(int i=0;i<result.size();i++){
 					//we need to check for H counts since pubchem search ignores these
