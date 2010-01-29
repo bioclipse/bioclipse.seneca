@@ -57,7 +57,7 @@ import spok.utils.SpectrumUtils;
  * data set with setData must contain all three types of spectra.
  */
 
-public class HMBCJudge extends TwoDSpectrumJudge {
+public class HMBCJudge extends AbstractTwoDSpectrumJudge {
 
     private static Logger logger = Logger.getLogger(HMBCJudge.class);
 	CMLCml cmlcml;

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import net.bioclipse.chemoinformatics.wizards.WizardHelper;
 import net.bioclipse.core.util.LogUtils;
-import net.bioclipse.seneca.judge.TwoDSpectrumJudge.TwoDRule;
+import net.bioclipse.seneca.judge.AbstractTwoDSpectrumJudge.TwoDRule;
 import nu.xom.Document;
 import nu.xom.Elements;
 
@@ -60,7 +60,7 @@ import spok.utils.SpectrumUtils;
  * handle ambigous assignments.
  */
 
-public class HHCOSYJudge extends TwoDSpectrumJudge {
+public class HHCOSYJudge extends AbstractTwoDSpectrumJudge {
 
 	private CMLCml cmlcml;
 	private static Logger logger = Logger.getLogger(HHCOSYJudge.class);

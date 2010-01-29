@@ -124,10 +124,12 @@ public class EvaluateHandler extends AbstractHandler {
                     Listener listener = new Listener() {
                       public void handleEvent(Event event) {
                         if(event.widget == ok){
-                        	StringBuffer result = new StringBuffer();
-                        	ICDKMolecule mol = net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().loadMolecule((IFile)ssel.getFirstElement());
-                        	SenecaJobSpecification sjs = null;
 							try {
+	                        	StringBuffer result = new StringBuffer();
+	                        	ICDKMolecule mol = net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().loadMolecule((IFile)ssel.getFirstElement());
+	                        	mol = (ICDKMolecule)net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().removeExplicitHydrogens(mol);
+	                        	mol = (ICDKMolecule)net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().addImplicitHydrogens(mol);
+	                        	SenecaJobSpecification sjs = null;
 								sjs = net.bioclipse.seneca.Activator.getDefault().getJavaSenecaManager().getJobSpecification(((IFile)selectedFiles.getFirstElement()));
 						        //Add judges
 						        Iterator<String> judgeIDs = sjs.getJudges().iterator();
@@ -146,12 +148,16 @@ public class EvaluateHandler extends AbstractHandler {
 						                                           .getFullPath().toOSString()
 						                                    + File.separator 
 						                                    + sjs.getJudgesData().get( judgeID)));
+										if (judge.hasMaxScore()) {
+											judge.calcMaxScore();
+										}
 						                if(judge.isLabelling())
 						                	judge.labelStartStructure(mol.getAtomContainer());
 						                try {
-						                	result.append(judgeID+ ": "+judge.evaluate(mol.getAtomContainer()).score+"\r\n");
+						                	result.append(judgeID+ ": "+judge.evaluate(mol.getAtomContainer()).score+"/"+judge.getMaxScore()+"\r\n");
 										} catch (Exception e) {
 											result.append(judgeID+ ": not possible with this structure\r\n");
+											e.printStackTrace();
 										}
 						              } catch (MissingInformationException e) {
 						                  throw new BioclipseException(e.getMessage(),e);
@@ -160,7 +166,7 @@ public class EvaluateHandler extends AbstractHandler {
 						          }
 						        }
 						        MessageDialog.openInformation(dialog, "Scoring Result", result.toString());
-							} catch (BioclipseException e) {
+							} catch (Exception e) {
 								LogUtils.handleException(e, logger, net.bioclipse.seneca.Activator.PLUGIN_ID);
 							}
                         }

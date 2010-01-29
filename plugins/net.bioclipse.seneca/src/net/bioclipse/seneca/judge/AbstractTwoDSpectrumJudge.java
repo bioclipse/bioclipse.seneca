@@ -39,7 +39,7 @@ import org.openscience.cdk.io.MDLWriter;
  * @author steinbeck
  * @created October 6, 2001
  */
-public abstract class TwoDSpectrumJudge extends AbstractJudge {
+public abstract class AbstractTwoDSpectrumJudge extends AbstractJudge {
 
 	/**
 	 * Description of the Field
@@ -61,7 +61,7 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 	 * @param name
 	 *            Description of Parameter
 	 */
-	public TwoDSpectrumJudge(String name) {
+	public AbstractTwoDSpectrumJudge(String name) {
 		super(name);
 		for (int i = 0; i < scores.length; i++) {
 			scores[i] = 0;
@@ -206,9 +206,16 @@ public abstract class TwoDSpectrumJudge extends AbstractJudge {
 			new JudgeResult(maxScore, scoreSum, satisfiedSignals, resultString);
 	}
 
+	/**
+	 * Finds an atom with a certain shift in an atomcontainer.
+	 * 
+	 * @param value1 The value, properties C_SHIFT, H_SHIFT and H_SHIFT_2 are considered.
+	 * @param ac The atom container to search in.
+	 * @return The found atom. If several exist, the first in the order of atoms is returned.
+	 */
 	private IAtom findAtom(double value1, IAtomContainer ac) {
 		for(int i=0;i<ac.getAtomCount();i++){
-			if((Double)ac.getAtom(i).getProperty(HMBCJudge.C_SHIFT)==value1
+			if((Double)ac.getAtom(i).getProperty(HMBCJudge.C_SHIFT)!=null && (Double)ac.getAtom(i).getProperty(HMBCJudge.C_SHIFT)==value1
 					|| (ac.getAtom(i).getProperty(HMBCJudge.H_SHIFT)!=null && (Double)ac.getAtom(i).getProperty(HMBCJudge.H_SHIFT)==value1)
 				    || (ac.getAtom(i).getProperty(HMBCJudge.H_SHIFT_2)!=null && (Double)ac.getAtom(i).getProperty(HMBCJudge.H_SHIFT_2)==value1)){
 				return ac.getAtom(i);
