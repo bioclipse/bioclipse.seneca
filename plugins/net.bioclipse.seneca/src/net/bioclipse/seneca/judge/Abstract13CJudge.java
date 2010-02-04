@@ -188,7 +188,7 @@ public abstract class Abstract13CJudge extends AbstractJudge {
                     boolean peakPickingDone=false;
                     stream = file.getContents();
                     IContentType contentType = contentTypeManager.findContentTypeFor(stream, file.getName());
-                    if(contentType.getId().equals( "net.bioclipse.contenttypes.jcampdx" ) ||  contentType.getId().equals( "net.bioclipse.contenttypes.cml.singleSpectrum")){
+                    if(contentType.getId()!=null && (contentType.getId().equals( "net.bioclipse.contenttypes.jcampdx" ) ||  contentType.getId().equals( "net.bioclipse.contenttypes.cml.singleSpectrum"))){
                         IJumboSpectrum spectrum=net.bioclipse.spectrum
                             .Activator.getDefault()
                             .getJavaSpectrumManager()

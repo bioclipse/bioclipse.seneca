@@ -27,9 +27,10 @@ public class ScoreSummary  {
 	public double maxScore = -1;
 	public String description = "";
 
-	public ScoreSummary(double score, String description) {
+	public ScoreSummary(double score, String description, double maxScore) {
 		this.score = score;
 		this.description = description;
+		this.maxScore = maxScore;
 	}
 
 	public String toString() {

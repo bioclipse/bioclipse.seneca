@@ -128,9 +128,9 @@ public class UserConfigurableStochasticStructureElucidationJob implements ICASEJ
       
       logger.debug("Annealing engine initialized");
 
-      ScoreSummary recentScore = new ScoreSummary((long) 0, "nop");
-      ScoreSummary lastScore = new ScoreSummary((long) 0, "nop");
-      ScoreSummary bestScore = new ScoreSummary((long) 0, "nop");
+      ScoreSummary recentScore = new ScoreSummary((long) 0, "nop", chiefJustice.calcMaxScore());
+      ScoreSummary lastScore = new ScoreSummary((long) 0, "nop", chiefJustice.calcMaxScore());
+      ScoreSummary bestScore = new ScoreSummary((long) 0, "nop", chiefJustice.calcMaxScore());
 
       if (richMonitor.isCanceled())
         return null;
@@ -164,7 +164,7 @@ public class UserConfigurableStochasticStructureElucidationJob implements ICASEJ
             bestScore = recentScore;
 
             logger.debug("New best score: "
-                + bestScore.score + " after #" + stepsDone);
+                + (bestScore.score/chiefJustice.calcMaxScore()) + " after #" + stepsDone);
 
             logger.debug("Best score raised to: " + bestScore);
 
@@ -173,7 +173,7 @@ public class UserConfigurableStochasticStructureElucidationJob implements ICASEJ
 
           if (recentScore.score >= bestScore.score) {
             logger.debug("Result AC: " + result);
-            result.setProperty("Score", recentScore.score);
+            result.setProperty("Score", (recentScore.score/chiefJustice.calcMaxScore()));
             result.setProperty("Steps so far", stepsDone);
             result.setProperty("Temperature", annealingEngine.getTemperature());
 
@@ -182,7 +182,7 @@ public class UserConfigurableStochasticStructureElucidationJob implements ICASEJ
                 scoreImprovedListeners.get( i ).betterScore( result );
             }
           }
-          logger.debug("Current best score: "+ bestScore.score);
+          logger.debug("Current best score: "+ (bestScore.score/chiefJustice.calcMaxScore()));
 
           annealingEngine.cool();
 
@@ -191,7 +191,7 @@ public class UserConfigurableStochasticStructureElucidationJob implements ICASEJ
 
           if (stepsDone % 10 == 0) {
             richMonitor.subTask("Best score: "
-                + bestScore.score
+                + (bestScore.score/chiefJustice.calcMaxScore())
                 + ", T="
                 + new FormatStringBuffer("%.3f")
                     .format(annealingEngine

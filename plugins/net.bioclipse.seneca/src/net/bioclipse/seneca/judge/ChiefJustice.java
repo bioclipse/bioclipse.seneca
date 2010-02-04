@@ -95,7 +95,6 @@ public class ChiefJustice {
 			initJudges();
 		double score = 0;
 		String description = "";
-		double maxScore = 0;
 		for (int f = 0; f < judges.size(); f++) {
 			IJudge judge = (IJudge) judges.get(f);
 			if (judge.getEnabled()) {
@@ -104,7 +103,6 @@ public class ChiefJustice {
 					//we adopt to values to weight
 					ser.score=ser.score/ser.maxScore*judge.getWeight();
 					ser.maxScore=judge.getWeight();
-					maxScore += ser.maxScore;
 					score += ser.score;
 					if (debug) {
 						System.out.println("Score from Judge " + judge.getName()
@@ -121,8 +119,7 @@ public class ChiefJustice {
 		if (score < 0) {
 			score = 0;
 		}
-		ScoreSummary scsy = new ScoreSummary(score, description);
-		scsy.maxScore = maxScore;
+		ScoreSummary scsy = new ScoreSummary(score, description, calcMaxScore());
 		return scsy;
 	}
 	
