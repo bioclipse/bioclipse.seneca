@@ -36,13 +36,6 @@ public class JudgeResult {
 	public double maxScore;
 
 	/**
-	 * The score is often based on particular property, e. g. the Wiener Number
-	 * of the current structure. This field allows passing back a value for this
-	 * property
-	 **/
-	public long propertyValue;
-
-	/**
 	 * A Human-readable description like '10 of 20 HMBC signals satisfied'. This
 	 * can for instance be used as the title for a structure drawing.
 	 **/
@@ -51,7 +44,6 @@ public class JudgeResult {
 	public JudgeResult(JudgeResult other) {
 		this.maxScore = other.maxScore;
 		this.score = other.score;
-		this.propertyValue = other.propertyValue;
 		this.scoreDescription = new String(other.scoreDescription);
 	}
 
@@ -59,7 +51,6 @@ public class JudgeResult {
 			String scoreDescription) {
 		this.maxScore = maxScore;
 		this.score = score;
-		this.propertyValue = propertyValue;
 		this.scoreDescription = scoreDescription;
 	}
 }

@@ -12,6 +12,7 @@ import net.bioclipse.jobs.BioclipseJobUpdateHook;
 import net.bioclipse.jobs.BioclipseUIJob;
 import net.bioclipse.managers.business.IBioclipseManager;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
+import net.bioclipse.seneca.judge.JudgeResult;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -79,4 +80,17 @@ public interface ISenecaManager extends IBioclipseManager {
   @Recorded
   public void executeJob(SenecaJobSpecification sjs, BioclipseUIJob<List<IMolecule>> uiJob);
 
+  @Recorded
+  @PublishedMethod( params = "SenecaJobSpecification sjs, IMolecule structure",
+                    methodSummary = "Evaluates a structure against the scoring " +
+                        "functions defined in a SenecaJobSpecification. Only " +
+                        "the scoring part of sjs is used. ")
+  public JudgeResult evaluateStructure(SenecaJobSpecification sjs, IMolecule structure);
+
+  @Recorded
+  @PublishedMethod( params = "SenecaJobSpecification sjs, List<IMolecule> structure",
+          methodSummary = "Evaluates a list of structure against the scoring " +
+          	"functions defined in a SenecaJobSpecification. Only " +
+          	"the scoring part of sjs is used. ")
+  public List<JudgeResult> evaluateStructures(SenecaJobSpecification sjs, List<IMolecule> structure);
 }

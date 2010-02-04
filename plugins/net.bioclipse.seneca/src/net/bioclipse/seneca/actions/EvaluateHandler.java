@@ -18,6 +18,7 @@ import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.util.LogUtils;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
 import net.bioclipse.seneca.judge.IJudge;
+import net.bioclipse.seneca.judge.JudgeResult;
 import net.bioclipse.seneca.judge.MissingInformationException;
 import net.bioclipse.spectrum.Activator;
 import net.bioclipse.ui.contentlabelproviders.FolderLabelProvider;
@@ -125,47 +126,13 @@ public class EvaluateHandler extends AbstractHandler {
                       public void handleEvent(Event event) {
                         if(event.widget == ok){
 							try {
-	                        	StringBuffer result = new StringBuffer();
 	                        	ICDKMolecule mol = net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().loadMolecule((IFile)ssel.getFirstElement());
 	                        	mol = (ICDKMolecule)net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().removeExplicitHydrogens(mol);
 	                        	mol = (ICDKMolecule)net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().addImplicitHydrogens(mol);
 	                        	SenecaJobSpecification sjs = null;
 								sjs = net.bioclipse.seneca.Activator.getDefault().getJavaSenecaManager().getJobSpecification(((IFile)selectedFiles.getFirstElement()));
-						        //Add judges
-						        Iterator<String> judgeIDs = sjs.getJudges().iterator();
-						        while (judgeIDs.hasNext()) {
-						          String judgeID = judgeIDs.next();
-						          Iterator<IJudge> judges = net.bioclipse.seneca.Activator.getDefault()
-						              .getJudgeExtensions().iterator();
-
-						          while (judges.hasNext()) {
-						            IJudge factory = judges.next();
-						            if (factory.getClass().getName().equals(judgeID)) {
-						              try {
-						                IJudge judge 
-						                    = factory.createJudge(
-						                          new Path( sjs.getJobDirectory()
-						                                           .getFullPath().toOSString()
-						                                    + File.separator 
-						                                    + sjs.getJudgesData().get( judgeID)));
-										if (judge.hasMaxScore()) {
-											judge.calcMaxScore();
-										}
-						                if(judge.isLabelling())
-						                	judge.labelStartStructure(mol.getAtomContainer());
-						                try {
-						                	result.append(judgeID+ ": "+judge.evaluate(mol.getAtomContainer()).score+"/"+judge.getMaxScore()+"\r\n");
-										} catch (Exception e) {
-											result.append(judgeID+ ": not possible with this structure\r\n");
-											e.printStackTrace();
-										}
-						              } catch (MissingInformationException e) {
-						                  throw new BioclipseException(e.getMessage(),e);
-						              }
-						            }
-						          }
-						        }
-						        MessageDialog.openInformation(dialog, "Scoring Result", result.toString());
+								JudgeResult result = net.bioclipse.seneca.Activator.getDefault().getJavaSenecaManager().evaluateStructure(sjs, mol);
+						        MessageDialog.openInformation(dialog, "Scoring Result", "Overall: "+(result.score/result.maxScore)+" ("+result.score+"/"+result.maxScore+").\r\n"+result.scoreDescription);
 							} catch (Exception e) {
 								LogUtils.handleException(e, logger, net.bioclipse.seneca.Activator.PLUGIN_ID);
 							}

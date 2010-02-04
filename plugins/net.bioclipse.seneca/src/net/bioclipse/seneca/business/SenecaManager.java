@@ -3,9 +3,12 @@ package net.bioclipse.seneca.business;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import net.bioclipse.cdk.domain.CDKMolecule;
+import net.bioclipse.cdk.domain.ICDKMolecule;
 import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.domain.IMolecule;
 import net.bioclipse.jobs.IReturner;
@@ -22,6 +25,7 @@ import net.bioclipse.seneca.job.PubchemStructureElucidationJob;
 import net.bioclipse.seneca.job.StochasticStructureElucidationJob;
 import net.bioclipse.seneca.job.UserConfigurableStochasticStructureElucidationJob;
 import net.bioclipse.seneca.judge.IJudge;
+import net.bioclipse.seneca.judge.JudgeResult;
 import net.bioclipse.seneca.judge.MissingInformationException;
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -295,5 +299,57 @@ public class SenecaManager implements IBioclipseManager {
   }
   public void addTempeatureAndScoreListener(TemperatureAndScoreListener listener){
       temperaturelistener=listener;
+  }
+  
+  public List<JudgeResult> evaluateStructures(SenecaJobSpecification sjs, List<IMolecule> structures) throws BioclipseException{
+	  List<JudgeResult> results = new ArrayList<JudgeResult>();
+	  for(int i=0;i<structures.size();i++){
+		  results.add(this.evaluateStructure(sjs, structures.get(i)));
+	  }
+	  return results;
+  }
+
+  public JudgeResult evaluateStructure(SenecaJobSpecification sjs, IMolecule structure) throws BioclipseException{
+  	StringBuffer result = new StringBuffer();
+	ICDKMolecule mol = net.bioclipse.cdk.business.Activator.getDefault().getJavaCDKManager().asCDKMolecule(structure);
+    //Add judges
+    Iterator<String> judgeIDs = sjs.getJudges().iterator();
+    double maxScore=0;
+    double score=0;
+    while (judgeIDs.hasNext()) {
+      String judgeID = judgeIDs.next();
+      Iterator<IJudge> judges = net.bioclipse.seneca.Activator.getDefault()
+          .getJudgeExtensions().iterator();
+      while (judges.hasNext()) {
+        IJudge factory = judges.next();
+        if (factory.getClass().getName().equals(judgeID)) {
+          try {
+            IJudge judge 
+                = factory.createJudge(
+                      new Path( sjs.getJobDirectory()
+                                       .getFullPath().toOSString()
+                                + File.separator 
+                                + sjs.getJudgesData().get( judgeID)));
+			if (judge.hasMaxScore()) {
+				judge.calcMaxScore();
+				maxScore+=judge.getMaxScore();
+			}
+            if(judge.isLabelling())
+            	judge.labelStartStructure(mol.getAtomContainer());
+            try {
+            	JudgeResult judgeResult = judge.evaluate(mol.getAtomContainer());
+            	result.append(judgeID+ ": "+judgeResult.score+"/"+judge.getMaxScore()+"\r\n");
+            	score += judgeResult.score;
+			} catch (Exception e) {
+				result.append(judgeID+ ": not possible with this structure\r\n");
+				e.printStackTrace();
+			}
+          } catch (MissingInformationException e) {
+              throw new BioclipseException(e.getMessage(),e);
+          }
+        }
+      }
+    }
+    return new JudgeResult(maxScore, score, 0, result.toString());
   }
 }
