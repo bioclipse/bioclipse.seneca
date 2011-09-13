@@ -15,7 +15,6 @@ import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.bioclipse.cdk.jchempaint.view.SWTFontManager;
 import net.bioclipse.cdk.jchempaint.widgets.JChemPaintEditorWidget;
 
 import org.eclipse.swt.SWT;
@@ -27,18 +26,22 @@ import org.eclipse.ui.part.ViewPart;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.FastScatterPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMolecule;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
-import org.openscience.cdk.renderer.Renderer;
+import org.openscience.cdk.renderer.AtomContainerRenderer;
+import org.openscience.cdk.renderer.font.SWTFontManager;
+import org.openscience.cdk.renderer.generators.AtomNumberGenerator.WillDrawAtomNumbers;
 import org.openscience.cdk.renderer.generators.BasicAtomGenerator;
+import org.openscience.cdk.renderer.generators.BasicAtomGenerator.CompactAtom;
 import org.openscience.cdk.renderer.generators.BasicBondGenerator;
+import org.openscience.cdk.renderer.generators.BasicSceneGenerator;
 import org.openscience.cdk.renderer.generators.IGenerator;
 
 public class BestStructureView extends ViewPart {
@@ -46,7 +49,7 @@ public class BestStructureView extends ViewPart {
     public static final String ID = 
         "net.bioclipse.seneca.views.BestStructureView";
 
-	private Renderer renderer;
+	private AtomContainerRenderer renderer;
 	private JChemPaintEditorWidget jcpwidget;
 
 	private IMolecule bestMolecule = null;
@@ -62,10 +65,10 @@ public class BestStructureView extends ViewPart {
 	    new StructureDiagramGenerator();
 	
 	public BestStructureView() {
-        List<IGenerator> generators = makeGenerators();
-    	renderer = new Renderer(generators, new SWTFontManager(null));
-    	renderer.getRenderer2DModel().setIsCompact(true);    	
-    	renderer.getRenderer2DModel().setDrawNumbers(false);
+        List<IGenerator<IAtomContainer>> generators = makeGenerators();
+    	renderer = new AtomContainerRenderer(generators, new SWTFontManager(null));
+    	renderer.getRenderer2DModel().getParameter(CompactAtom.class).setValue(true);
+    	renderer.getRenderer2DModel().getParameter(WillDrawAtomNumbers.class).setValue(false);
   }
 
 	public void createPartControl(Composite parent) {
@@ -112,8 +115,10 @@ public class BestStructureView extends ViewPart {
 		this.updateView();
 	}
 	
-	private List<IGenerator> makeGenerators() {
-	    List<IGenerator> generators = new ArrayList<IGenerator>();
+	private List<IGenerator<IAtomContainer>> makeGenerators() {
+	    List<IGenerator<IAtomContainer>> generators =
+	    	new ArrayList<IGenerator<IAtomContainer>>();
+	    generators.add(new BasicSceneGenerator());
 	    generators.add(new BasicBondGenerator());
 	    generators.add(new BasicAtomGenerator());
 	    return generators;

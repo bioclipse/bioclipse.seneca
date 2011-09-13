@@ -207,7 +207,7 @@ public class HHCOSYJudge extends AbstractTwoDSpectrumJudge {
 			if(spectrum.getType().equals("NMR")){
 				for(int k=0;k<spectrum.getPeakListElements().get(0).getPeakElements().size();k++){
 					for(int l=0;l<startStructure.getAtomCount();l++){
-						if(startStructure.getAtom(l).getProperty(HMBCJudge.C_SHIFT)==null && startStructure.getAtom(l).getHydrogenCount()==Integer.parseInt(spectrum.getPeakListElements().get(0).getPeakElements().get(k).getAttributeValue("multiplicity"))){
+						if(startStructure.getAtom(l).getProperty(HMBCJudge.C_SHIFT)==null && startStructure.getAtom(l).getImplicitHydrogenCount()==Integer.parseInt(spectrum.getPeakListElements().get(0).getPeakElements().get(k).getAttributeValue("multiplicity"))){
 							startStructure.getAtom(l).setProperty(HMBCJudge.C_SHIFT,spectrum.getPeakListElements().get(0).getPeakElements().get(k).getXValue());
 							break;
 						}

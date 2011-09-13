@@ -22,10 +22,9 @@ import net.bioclipse.core.util.LogUtils;
 import net.bioclipse.jobs.BioclipseJobUpdateHook;
 import net.bioclipse.jobs.BioclipseUIJob;
 import net.bioclipse.seneca.Activator;
-import net.bioclipse.seneca.anneal.TemperatureListener;
+import net.bioclipse.seneca.business.IFinishListener;
 import net.bioclipse.seneca.business.IJavaSenecaManager;
 import net.bioclipse.seneca.business.ISenecaManager;
-import net.bioclipse.seneca.business.IFinishListener;
 import net.bioclipse.seneca.domain.SenecaJobSpecification;
 import net.bioclipse.seneca.views.BestStructureView;
 import net.bioclipse.seneca.wizard.CheckJobWizard;
@@ -158,7 +157,12 @@ public class SenecaJobEditor extends FormEditor implements IFinishListener, Temp
                     result.add( chunk );
                     BestStructureView view = (BestStructureView)getSite().getPage().findView(BestStructureView.ID);
                     if(view!=null)
-                        view.setBestStructure( DefaultChemObjectBuilder.getInstance().newMolecule( ((CDKMolecule) chunk ).getAtomContainer() ));
+                        view.setBestStructure(
+                        	DefaultChemObjectBuilder.getInstance().newInstance(
+                        		org.openscience.cdk.interfaces.IMolecule.class,
+                        		((CDKMolecule) chunk ).getAtomContainer()
+                            )
+                        );
                 }
             });
         }else{

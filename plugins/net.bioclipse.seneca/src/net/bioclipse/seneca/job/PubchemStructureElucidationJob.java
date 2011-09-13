@@ -172,7 +172,7 @@ public class PubchemStructureElucidationJob
 		int[] hcounts = new int[4];
 		for(IAtom atom : mol.atoms()){
 			if(atom.getSymbol().equals("C")){
-				int hcount=atom.getHydrogenCount();
+				int hcount=atom.getImplicitHydrogenCount();
 				Iterator<IAtom> it = mol.getConnectedAtomsList(atom).iterator();
 				while(it.hasNext()){
 					if(it.next().getSymbol().equals("H")){

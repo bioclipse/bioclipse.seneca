@@ -66,10 +66,10 @@ public class EquivalentClassesDeterministicGenerator {
 		Graph graph = (Graph)graphs.get(0);
 		for (int f = 0; f < baseAtomContainer.getAtomCount(); f++)
 		{
-			ac = baseAtomContainer.getBuilder().newAtomContainer();
+			ac = baseAtomContainer.getBuilder().newInstance(IAtomContainer.class);
 			atom = baseAtomContainer.getAtom(f);
 			ac.addAtom(atom);
-			ac.setProperty("class", new Integer(atom.getHydrogenCount()));
+			ac.setProperty("class", new Integer(atom.getImplicitHydrogenCount()));
 			graph.add(ac);
 		}
 		graph.partition();

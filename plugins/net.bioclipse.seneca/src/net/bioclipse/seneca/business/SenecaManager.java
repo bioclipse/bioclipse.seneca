@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.Path;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IIsotope;
 import org.openscience.cdk.interfaces.IMolecularFormula;
 import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator;
 
@@ -126,7 +127,7 @@ public class SenecaManager implements IBioclipseManager {
         //We take start start structure from the formula and use 
         //the DEPT information if any
         IAtomContainer startStructure 
-            = DefaultChemObjectBuilder.getInstance().newAtomContainer();
+            = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class);
         IMolecularFormula formula 
             = MolecularFormulaManipulator.getMolecularFormula( 
                   jobSpec.getMolecularFormula(),
@@ -134,21 +135,21 @@ public class SenecaManager implements IBioclipseManager {
         for(int i=0;i<4;i++){
             int atomcount = jobSpec.getDeptData( i );
             for(int k=0;k<atomcount;k++){
-              IAtom atom = startStructure.getBuilder().newAtom( "C" );
-              atom.setHydrogenCount( i );
+              IAtom atom = startStructure.getBuilder().newInstance(IAtom.class, "C" );
+              atom.setImplicitHydrogenCount( i );
               startStructure.addAtom( atom );
               formula.removeIsotope( 
-                  startStructure.getBuilder().newIsotope( "C" ) );
+                  startStructure.getBuilder().newInstance(IIsotope.class, "C" ) );
               for(int l=0;l<i;l++){
                   formula.removeIsotope( 
-                      startStructure.getBuilder().newIsotope( "H" ) );
+                      startStructure.getBuilder().newInstance(IIsotope.class, "H" ) );
               }
             }
         }
         IAtomContainer residue 
             = MolecularFormulaManipulator.getAtomContainer( formula );
         for(IAtom atom : residue.atoms())
-            atom.setHydrogenCount( 0 );
+            atom.setImplicitHydrogenCount( 0 );
         startStructure.add( residue );
 	    if (generatorID != null) {
 	      if (StructureGeneratorSettingsPage.generatorName

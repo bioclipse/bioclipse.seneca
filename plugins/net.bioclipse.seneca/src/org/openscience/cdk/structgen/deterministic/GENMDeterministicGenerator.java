@@ -25,12 +25,16 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openscience.cdk.Atom;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IBond.Order;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
+import org.openscience.cdk.interfaces.IElement;
+import org.openscience.cdk.interfaces.IIsotope;
 import org.openscience.cdk.interfaces.IMolecularFormula;
 import org.openscience.cdk.interfaces.IMolecule;
-import org.openscience.cdk.interfaces.IBond.Order;
 import org.openscience.cdk.nonotify.NoNotificationChemObjectBuilder;
 import org.openscience.cdk.structgen.IStructureGenerationListener;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -259,17 +263,17 @@ public class GENMDeterministicGenerator {
 	 */
 	 public void analyseMolecularFormula(IMolecularFormula mfa) throws java.lang.Exception
 	 {
-	 	 molecularFormula[1]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("C")));
-	 	 molecularFormula[2]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("H")));
-	 	 molecularFormula[3]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("O")));
-	 	 molecularFormula[4]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("N")));
-	 	 molecularFormula[5]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("S")));
-	 	 molecularFormula[6]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("P")));
-	 	 molecularFormula[7]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("Si")));
-	 	 molecularFormula[8]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("F")));
-	 	 molecularFormula[9]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("Cl")));
-	 	 molecularFormula[10]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("Br")));
-	 	 molecularFormula[11]=mfa.getIsotopeCount(mfa.getBuilder().newIsotope(mfa.getBuilder().newElement("I")));
+	 	 molecularFormula[1]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "C")));
+	 	 molecularFormula[2]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "H")));
+	 	 molecularFormula[3]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "O")));
+	 	 molecularFormula[4]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "N")));
+	 	 molecularFormula[5]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "S")));
+	 	 molecularFormula[6]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "P")));
+	 	 molecularFormula[7]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "Si")));
+	 	 molecularFormula[8]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "F")));
+	 	 molecularFormula[9]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "Cl")));
+	 	 molecularFormula[10]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "Br")));
+	 	 molecularFormula[11]=mfa.getIsotopeCount(mfa.getBuilder().newInstance(IIsotope.class, mfa.getBuilder().newInstance(IElement.class, "I")));
 
 		 molecularFormula[0]=2*molecularFormula[1]+molecularFormula[4]+molecularFormula[6]+
 			2*molecularFormula[7]+2-molecularFormula[2]-molecularFormula[8]-molecularFormula[9]-
@@ -919,7 +923,7 @@ public class GENMDeterministicGenerator {
 			 }
 
 		//order the fragments
-		atomContainer= builder.newAtomContainer();
+		atomContainer= builder.newInstance(IAtomContainer.class);
 
 		parentID=new int[setOfBasicFragment.size()];
 
@@ -941,7 +945,7 @@ public class GENMDeterministicGenerator {
 		for(i=0;i<setOfBasicFragment.size();i++)
 		{
 			atomContainer.addAtom(
-				builder.newAtom(((BasicFragment)(setOfBasicFragment.get(i))).getHeavyAtomSymbol())
+				builder.newInstance(IAtom.class,((BasicFragment)(setOfBasicFragment.get(i))).getHeavyAtomSymbol())
 			);
 		}
 
@@ -949,7 +953,7 @@ public class GENMDeterministicGenerator {
 
 		for(i=0;i<atomContainer.getAtomCount();i++)
 		{
-			atomContainer.getAtom(i).setHydrogenCount(((BasicFragment)(setOfBasicFragment.get(i))).getNumberOfHydrogen());
+			atomContainer.getAtom(i).setImplicitHydrogenCount(((BasicFragment)(setOfBasicFragment.get(i))).getNumberOfHydrogen());
 		}
 
 		 //2. initialize the matrix
@@ -2720,10 +2724,10 @@ public class GENMDeterministicGenerator {
 	 {
 		 if (listeners == null || listeners.size() > 0) {
 			 int i,j;
-			 IMolecule mol= builder.newMolecule();
+			 IMolecule mol= builder.newInstance(IMolecule.class);
 			 int size=set.size();
 			 for(i=0;i<size;i++)
-				 mol.addAtom(builder.newAtom(((BasicFragment)(set.get(i))).getHeavyAtomSymbol()));
+				 mol.addAtom(builder.newInstance(Atom.class,((BasicFragment)(set.get(i))).getHeavyAtomSymbol()));
 			 for(i=0;i<size-1;i++)
 				 for(j=i+1;j<size;j++)
 					 if(matrix[i][j]!=0){

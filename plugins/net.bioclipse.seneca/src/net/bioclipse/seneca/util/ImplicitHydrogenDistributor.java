@@ -12,7 +12,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class ImplicitHydrogenDistributor {
 
 	public static IAtomContainer generate(IAtomContainer atomContainer) {
-		IAtomContainer result = atomContainer.getBuilder().newAtomContainer();
+		IAtomContainer result = atomContainer.getBuilder().newInstance(IAtomContainer.class);
 		int hCount = countHydrogens(atomContainer);
 		System.out.println("Hydrogens to distribute: " + hCount);
 
@@ -24,12 +24,12 @@ public class ImplicitHydrogenDistributor {
 				if (atomSymbol.equals(Elements.NITROGEN.getSymbol()) ||
 					atomSymbol.equals(Elements.CARBON.getSymbol())) {
 					if (hCount >= 2) {
-						atom.setHydrogenCount(2);
+						atom.setImplicitHydrogenCount(2);
 						hCount = hCount-2;
 					}
 				} else if (atomSymbol.equals(Elements.OXYGEN.getSymbol())) {
 					if (hCount >= 1) {
-						atom.setHydrogenCount(1);
+						atom.setImplicitHydrogenCount(1);
 						hCount = hCount-1;
 					}
 				}
@@ -42,7 +42,7 @@ public class ImplicitHydrogenDistributor {
 				if (hCount == 0) break;	// XXX altered - may not work : check!
 				if (atom.getSymbol().equals(Elements.CARBON.getSymbol())) {
 					// ok, only added two so far, so can add another one
-					atom.setHydrogenCount(3);
+					atom.setImplicitHydrogenCount(3);
 					hCount--;
 				}
 			}
@@ -65,7 +65,7 @@ public class ImplicitHydrogenDistributor {
 	private static int countImplicitHydrogens(IAtomContainer container) {
 		int hCount = 0;
 		for (IAtom atom : container.atoms()) {
-			hCount += atom.getHydrogenCount();
+			hCount += atom.getImplicitHydrogenCount();
 		}
 		return hCount;
 	}

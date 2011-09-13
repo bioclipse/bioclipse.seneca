@@ -154,7 +154,7 @@ public class WCCHOSECodeDEPTJudge extends AbstractJudge implements IJudge {
 	}
 
 	private int getHydrogenCount(IAtomContainer ac, IAtom atom) {
-		int hCount = atom.getHydrogenCount();
+		int hCount = atom.getImplicitHydrogenCount();
 		Iterator<IAtom> atoms = ac.getConnectedAtomsList(atom).iterator();
 		while (atoms.hasNext()) {
 			if (atoms.next().getSymbol().equals("H")) {

@@ -33,7 +33,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.openscience.cdk.aromaticity.CDKHueckelAromaticityDetector;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMolecule;
-import org.openscience.cdk.io.MDLWriter;
+import org.openscience.cdk.io.MDLV2000Writer;
 import org.openscience.cdk.structgen.RandomGenerator;
 import org.openscience.cdk.structgen.SingleStructureRandomGenerator;
 import org.openscience.cdk.tools.FormatStringBuffer;
@@ -101,7 +101,7 @@ public class UserConfigurableStochasticStructureElucidationJob implements ICASEJ
       if(detectAromaticity)
           CDKHueckelAromaticityDetector.detectAromaticity( mol );
       StringWriter writer = new StringWriter();
-      MDLWriter mdlWriter = new MDLWriter(writer);
+      MDLV2000Writer mdlWriter = new MDLV2000Writer(writer);
       mdlWriter.write(mol);
       System.out.println(writer.toString());
 

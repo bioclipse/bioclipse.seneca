@@ -10,7 +10,6 @@
  ******************************************************************************/
 package net.bioclipse.seneca.job;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +40,6 @@ import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMolecule;
-import org.openscience.cdk.io.MDLWriter;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
@@ -167,7 +165,9 @@ public class GAStructureElucidationJob implements StateListener, ICASEJob {
 	            		AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mols.get(i).getAtomContainer());
 	                    CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(mols.get(i).getAtomContainer());
 	            		if(PubchemStructureElucidationJob.checkForHCountValidity(specification, mols.get(i).getAtomContainer()))
-	            			seed.add(DefaultChemObjectBuilder.getInstance().newMolecule(mols.get(i).getAtomContainer()));
+	            			seed.add(DefaultChemObjectBuilder.getInstance().newInstance(
+	            				IMolecule.class, mols.get(i).getAtomContainer())
+	            			);
 	            		else
 	            			wrongseeds++;
                 	}catch(Exception ex){
