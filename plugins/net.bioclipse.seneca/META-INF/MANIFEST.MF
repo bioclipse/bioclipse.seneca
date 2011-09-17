@@ -33,7 +33,8 @@ Require-Bundle: org.eclipse.ui,
  org.openscience.cdk.renderextra,
  org.openscience.cdk.renderswt,
  org.openscience.cdk.smiles,
- net.bioclipse.ui
+ net.bioclipse.ui,
+ net.bioclipse.chart
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: net.bioclipse.seneca.Activator
 Bundle-ClassPath: jars/predictor.jar,
